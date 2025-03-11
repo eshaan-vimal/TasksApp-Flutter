@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'package:frontend/features/auth/pages/login_page.dart';
+import 'package:frontend/features/auth/pages/signup_page.dart';
 
 
-class SignupPage extends StatefulWidget
+
+class LoginPage extends StatefulWidget
 {
-  const SignupPage ({super.key});
+  const LoginPage ({super.key});
 
 
-  static MaterialPageRoute route () => MaterialPageRoute(builder: (context) => const SignupPage());
+  static MaterialPageRoute route () => MaterialPageRoute(builder: (context) => const LoginPage());
 
   @override
-  State<SignupPage> createState () => _SignupPageState();
+  State<LoginPage> createState () => _LoginPageState();
 }
 
 
-class _SignupPageState extends State<SignupPage>
+class _LoginPageState extends State<LoginPage>
 {
-  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
-  void signupUser ()
+  void loginUser ()
   {
     if (formKey.currentState!.validate())
     {
-      // Store data
+      //
     }
   }
 
@@ -35,7 +35,6 @@ class _SignupPageState extends State<SignupPage>
   @override
   void dispose ()
   {
-    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -56,7 +55,7 @@ class _SignupPageState extends State<SignupPage>
           
               const Spacer(flex: 12,),
               Text(
-                "Sign Up.",
+                "Log In.",
                 style: TextStyle(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
@@ -64,14 +63,6 @@ class _SignupPageState extends State<SignupPage>
                 ),
               ),
               const Spacer(flex: 2,),
-          
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Name",
-                ),
-              ),
-              const Spacer(flex: 1,),
           
               TextFormField(
                 controller: emailController,
@@ -135,11 +126,9 @@ class _SignupPageState extends State<SignupPage>
               const Spacer(flex: 2,),
           
               ElevatedButton(
-                onPressed: () {
-                  signupUser();
-                },
+                onPressed: loginUser,
                 child: Text(
-                  "SIGN UP",
+                  "LOG IN",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -151,18 +140,18 @@ class _SignupPageState extends State<SignupPage>
           
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(LoginPage.route());
+                  Navigator.of(context).pushReplacement(SignupPage.route());
                 },
                 child: RichText(
                   text: TextSpan(
-                    text: "Already have an account? ",
+                    text: "Don't have an account? ",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
                     ),
                     children: [
                       TextSpan(
-                        text: "Log In",
+                        text: "Sign Up",
                         style: TextStyle(
                           // fontSize: 12,
                           fontWeight: FontWeight.bold,
