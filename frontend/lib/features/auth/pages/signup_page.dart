@@ -26,7 +26,16 @@ class _SignupPageState extends State<SignupPage>
 
   String? validateName (String? value)
   {
+    if (value == null || value.trim().isEmpty)
+    {
+      return "Field empty";
+    }
+    if (!RegExp(r"^[A-Za-z]+(?:[' -][A-Za-z]+)*$").hasMatch(value))
+    {
+      return "Invalid name";
+    }
 
+    return null;
   }
 
   String? validateEmail (String? value)
