@@ -23,6 +23,51 @@ class _LoginPageState extends State<LoginPage>
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
+  String? validateEmail (String? value)
+  {
+    if (value == null || value.trim().isEmpty)
+    {
+      return "Field empty";
+    }
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value))
+    {
+      return "Invalid email";
+    }
+
+    return null;
+  }
+
+  String? validatePassword (String? value)
+  {
+    if (value == null || value.trim().isEmpty)
+    {
+      return "Field empty";
+    }
+    if (value.length < 8)
+    {
+      return "Aleast 8 characters long";
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) 
+    {
+      return 'Atleast one uppercase letter';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(value)) 
+    {
+      return 'Atleast one lowercase letter';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) 
+    {
+      return 'Atleast one number';
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) 
+    {
+      return 'Atleast one special character';
+    }
+
+    return null;
+  }
+
+
   void loginUser ()
   {
     if (formKey.currentState!.validate())
@@ -67,61 +112,18 @@ class _LoginPageState extends State<LoginPage>
               TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  hintText: "Email",
+                  hintText: "Enter email",
                 ),
-                validator: (value) {
-
-                  if (value == null || value.trim().isEmpty)
-                  {
-                    return "Field empty";
-                  }
-
-                  RegExp exp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-
-                  if (!exp.hasMatch(value))
-                  {
-                    return "Invalid email";
-                  }
-
-                  return null;
-                },
+                validator: validateEmail,
               ),
               const Spacer(flex: 1,),
           
               TextFormField(
                 controller: passwordController,
                 decoration: InputDecoration(
-                  hintText: "Password",
+                  hintText: "Enter password",
                 ),
-                validator: (value) {
-
-                  if (value == null || value.trim().isEmpty)
-                  {
-                    return "Field empty";
-                  }
-                  if (value.length < 8)
-                  {
-                    return "Aleast 8 characters long";
-                  }
-                  if (!RegExp(r'[A-Z]').hasMatch(value)) 
-                  {
-                    return 'Atleast one uppercase letter';
-                  }
-                  if (!RegExp(r'[a-z]').hasMatch(value)) 
-                  {
-                    return 'Atleast one lowercase letter';
-                  }
-                  if (!RegExp(r'[0-9]').hasMatch(value)) 
-                  {
-                    return 'Atleast one number';
-                  }
-                  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) 
-                  {
-                    return 'Atleast one special character';
-                  }
-
-                  return null;
-                },
+                validator: validatePassword,
               ),
               const Spacer(flex: 2,),
           

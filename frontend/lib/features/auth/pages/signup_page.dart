@@ -19,10 +19,65 @@ class _SignupPageState extends State<SignupPage>
 {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController password1Controller = TextEditingController();
+  final TextEditingController password2Controller = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
+  String? validateName (String? value)
+  {
+
+  }
+
+  String? validateEmail (String? value)
+  {
+    if (value == null || value.trim().isEmpty)
+    {
+      return "Field empty";
+    }
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value))
+    {
+      return "Invalid email";
+    }
+
+    return null;
+  }
+
+  String? validatePassword (String? value)
+  {
+    if (value == null || value.trim().isEmpty)
+    {
+      return "Field empty";
+    }
+    if (password1Controller.text != password2Controller.text)
+    {
+      return "Passwords don't match";
+    }
+    if (value.length < 8)
+    {
+      return "Aleast 8 characters long";
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) 
+    {
+      return 'Atleast one uppercase letter';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(value)) 
+    {
+      return 'Atleast one lowercase letter';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) 
+    {
+      return 'Atleast one number';
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) 
+    {
+      return 'Atleast one special character';
+    }
+
+    return null;
+  }
+
+  
   void signupUser ()
   {
     if (formKey.currentState!.validate())
@@ -37,7 +92,8 @@ class _SignupPageState extends State<SignupPage>
   {
     nameController.dispose();
     emailController.dispose();
-    passwordController.dispose();
+    password1Controller.dispose();
+    password2Controller.dispose();
     super.dispose();
   }
 
@@ -68,69 +124,39 @@ class _SignupPageState extends State<SignupPage>
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  hintText: "Name",
+                  hintText: "Enter name",
                 ),
+                validator: validateName,
               ),
               const Spacer(flex: 1,),
           
               TextFormField(
+                keyboardType: TextInputType.emailAddress,
                 controller: emailController,
                 decoration: InputDecoration(
-                  hintText: "Email",
+                  hintText: "Enter email",
                 ),
-                validator: (value) {
-
-                  if (value == null || value.trim().isEmpty)
-                  {
-                    return "Field empty";
-                  }
-
-                  RegExp exp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-
-                  if (!exp.hasMatch(value))
-                  {
-                    return "Invalid email";
-                  }
-
-                  return null;
-                },
+                validator: validateEmail,
               ),
               const Spacer(flex: 1,),
           
               TextFormField(
-                controller: passwordController,
+                obscureText: true,
+                controller: password1Controller,
                 decoration: InputDecoration(
-                  hintText: "Password",
+                  hintText: "Enter password",
                 ),
-                validator: (value) {
+                validator: validatePassword,
+              ),
+              const Spacer(flex: 1,),
 
-                  if (value == null || value.trim().isEmpty)
-                  {
-                    return "Field empty";
-                  }
-                  if (value.length < 8)
-                  {
-                    return "Aleast 8 characters long";
-                  }
-                  if (!RegExp(r'[A-Z]').hasMatch(value)) 
-                  {
-                    return 'Atleast one uppercase letter';
-                  }
-                  if (!RegExp(r'[a-z]').hasMatch(value)) 
-                  {
-                    return 'Atleast one lowercase letter';
-                  }
-                  if (!RegExp(r'[0-9]').hasMatch(value)) 
-                  {
-                    return 'Atleast one number';
-                  }
-                  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) 
-                  {
-                    return 'Atleast one special character';
-                  }
-
-                  return null;
-                },
+              TextFormField(
+                obscureText: true,
+                controller: password2Controller,
+                decoration: InputDecoration(
+                  hintText: "Confirm password",
+                ),
+                validator: validatePassword,
               ),
               const Spacer(flex: 2,),
           
