@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/features/auth/cubit/auth_cubit.dart';
 
 import 'package:frontend/features/auth/pages/signup_page.dart';
+import 'package:frontend/features/home/pages/home_page.dart';
 
 
 
@@ -43,28 +46,31 @@ class _LoginPageState extends State<LoginPage>
     {
       return "Field empty";
     }
+
+    String errorText = "";
+
     if (value.length < 8)
     {
-      return "Aleast 8 characters long";
+      errorText += errorText.isEmpty ? "Aleast 8 characters long" : "\nAleast 8 characters long";
     }
     if (!RegExp(r'[A-Z]').hasMatch(value)) 
     {
-      return 'Atleast one uppercase letter';
+      errorText += errorText.isEmpty ? "Atleast one uppercase letter" : "\nAtleast one uppercase letter";
     }
     if (!RegExp(r'[a-z]').hasMatch(value)) 
     {
-      return 'Atleast one lowercase letter';
+      errorText += errorText.isEmpty ? "Atleast one lowercase letter" : "\nAtleast one lowercase letter";
     }
     if (!RegExp(r'[0-9]').hasMatch(value)) 
     {
-      return 'Atleast one number';
+      errorText += errorText.isEmpty ? "Atleast one number" : "\nAtleast one number";
     }
     if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) 
     {
-      return 'Atleast one special character';
+      errorText += errorText.isEmpty ? "Atleast one special character" : "\nAtleast one special character";
     }
 
-    return null;
+    return errorText.isEmpty ? null : errorText;
   }
 
 
@@ -72,7 +78,10 @@ class _LoginPageState extends State<LoginPage>
   {
     if (formKey.currentState!.validate())
     {
-      //
+      context.read<AuthCubit>().login(
+        email: emailController.text.trim(), 
+        password: passwordController.text.trim(),
+      );
     }
   }
 
@@ -89,86 +98,124 @@ class _LoginPageState extends State<LoginPage>
   Widget build (BuildContext context)
   {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-          
-              const Spacer(flex: 12,),
-              Text(
-                "Log In.",
-                style: TextStyle(
-                  fontSize: 50,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 3,
-                ),
-              ),
-              const Spacer(flex: 2,),
-          
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  hintText: "Enter email",
-                ),
-                validator: validateEmail,
-              ),
-              const Spacer(flex: 1,),
-          
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  hintText: "Enter password",
-                ),
-                validator: validatePassword,
-              ),
-              const Spacer(flex: 2,),
-          
-              ElevatedButton(
-                onPressed: loginUser,
-                child: Text(
-                  "LOG IN",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10,),
-          
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushReplacement(SignupPage.route());
-                },
-                child: RichText(
-                  text: TextSpan(
-                    text: "Don't have an account? ",
+      body: BlocConsumer<AuthCubit,AuthState>(
+
+        listener: (context, state) {
+
+          if (state is AuthError)
+          {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
+              )
+            );
+          }
+
+          if (state is AuthLoggedIn)
+          {
+            Navigator.pushReplacement(context, HomePage.route());
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Log in successful!"),
+              )
+            );
+          }
+
+        },
+
+        builder: (context, state) {
+
+          if (state is AuthLoading)
+          {
+            return Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
+
+          return Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+              
+                  const Spacer(flex: 12,),
+                  Text(
+                    "Log In.",
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
                     ),
-                    children: [
-                      TextSpan(
-                        text: "Sign Up",
-                        style: TextStyle(
-                          // fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  const Spacer(flex: 2,),
+              
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      hintText: "Enter email",
+                    ),
+                    validator: validateEmail,
+                  ),
+                  const Spacer(flex: 1,),
+              
+                  TextFormField(
+                    obscureText: true,
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      hintText: "Enter password",
+                    ),
+                    validator: validatePassword,
+                  ),
+                  const Spacer(flex: 2,),
+              
+                  ElevatedButton(
+                    onPressed: loginUser,
+                    child: Text(
+                      "LOG IN",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+              
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(SignupPage.route());
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Sign Up",
+                            style: TextStyle(
+                              // fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              
+                  const Spacer(flex: 12,),
+              
+                ],
               ),
-          
-              const Spacer(flex: 12,),
-          
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }

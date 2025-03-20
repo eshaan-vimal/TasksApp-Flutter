@@ -1,16 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:frontend/features/auth/cubit/auth_cubit.dart';
 import 'package:frontend/features/auth/pages/login_page.dart';
+import 'package:frontend/features/home/pages/home_page.dart';
 
 
 void main ()
 {
-  runApp(const MyApp ());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthCubit()),
+      ],
+      child: const MyApp(),
+    )
+  );
 }
 
-class MyApp extends StatelessWidget
+
+class MyApp extends StatefulWidget
 {
   const MyApp ({super.key});
+
+  @override
+  State<MyApp> createState () => _MyAppState ();
+}
+
+class _MyAppState extends State<MyApp>
+{
+  @override
+  void initState ()
+  {
+    super.initState();
+    context.read<AuthCubit>().getUser();
+  }
+
+
+  @override
+  void dispose ()
+  {
+    super.dispose();
+  }
 
   
   @override
@@ -59,7 +90,31 @@ class MyApp extends StatelessWidget
         ),
 
       ),
-      home: const LoginPage(),
+      home: BlocConsumer<AuthCubit,AuthState>(
+
+        listener: (context, state) {
+          if (state is AuthError)
+          {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
+              )
+            );
+          }
+        },
+
+        builder: (context, state) {
+          if (state is AuthLoggedIn)
+          {
+            return const HomePage();
+          }
+          else
+          {
+            return const LoginPage();
+          }
+        }
+
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
