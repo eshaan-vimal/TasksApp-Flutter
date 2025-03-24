@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage>
                 DateFormat('d').format(task.dueAt) == DateFormat('d').format(selectedDate) &&
                 task.dueAt.month == selectedDate.month &&
                 task.dueAt.year == selectedDate.year
-              )).toList();
+              )).toList()..sort((a, b) => a.dueAt.compareTo(b.dueAt));
 
               if (tasks.isEmpty)
               {
