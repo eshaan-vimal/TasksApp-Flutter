@@ -29,6 +29,20 @@ class _HomePageState extends State<HomePage>
   DateTime selectedDate = DateTime.now();
 
 
+  void deleteTask (String id) async
+  {
+    final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
+    final taskCubit = context.read<TaskCubit>();
+
+    await taskCubit.deleteTask(
+      token: authCreds.user.token!, 
+      taskId: id,
+    );
+
+    taskCubit.getTasks(token: authCreds.user.token!);
+  }
+
+
   @override
   void initState ()
   {
@@ -83,6 +97,15 @@ class _HomePageState extends State<HomePage>
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
+                )
+              );
+            }
+
+            if (state is TaskDelete)
+            {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Task deleted successfully!"),
                 )
               );
             }
@@ -164,7 +187,7 @@ class _HomePageState extends State<HomePage>
                               extentRatio: 0.25,
                               children: [
                                 SlidableAction(
-                                  onPressed: (_) {},
+                                  onPressed: (_) => deleteTask(task.id),
                                   flex: 1,
                                   backgroundColor: Colors.redAccent,
                                   foregroundColor: Colors.white,

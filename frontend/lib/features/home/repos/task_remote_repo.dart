@@ -120,6 +120,38 @@ class TaskRemoteRepo
   }
 
 
+  Future<void> deleteTask ({
+    required String token,
+    required String taskId,
+  }) async
+  {
+    try
+    {
+      final res = await http.delete(
+        Uri.parse('${Constants.backendUri}/task'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: jsonEncode({
+          'taskId': taskId,
+        }),
+      ).timeout(Duration(seconds: 3));
+
+      if (res.statusCode != 200)
+      {
+        throw jsonDecode(res.body)['error'];
+      }
+
+      // await taskLocalRepo.deleteTask(taskId);
+    }
+    catch (error)
+    {
+      rethrow;
+    }
+  }
+
+
   Future<bool> syncTasks ({
     required String token,
     required List<TaskModel> unsyncedTasks,

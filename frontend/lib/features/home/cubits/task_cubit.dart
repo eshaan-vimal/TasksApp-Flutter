@@ -67,10 +67,32 @@ class TaskCubit extends Cubit<TaskState>
   }
 
 
+  Future<void> deleteTask ({
+    required String token,
+    required String taskId,
+  }) async
+  {
+    try
+    {
+      emit(TaskLoading());
+
+      await taskRemoteRepo.deleteTask(
+        token: token,
+        taskId: taskId,
+      );
+
+      emit(TaskDelete());
+    }
+    catch (error)
+    {
+      emit(TaskError(error.toString()));
+    }
+  }
+
+
   Future<void> syncTasks (String token) async
   {
     final unsyncedTasks = await taskLocalRepo.getUnsyncedTasks();
-    print(unsyncedTasks);
     if (unsyncedTasks.isEmpty)
     {
       return;
@@ -87,7 +109,7 @@ class TaskCubit extends Cubit<TaskState>
       {
         await taskLocalRepo.updateSyncStatus(task.id, 1);
       }
-      print("Synced nigga");
+      print("Synced");
     }
   }
 }

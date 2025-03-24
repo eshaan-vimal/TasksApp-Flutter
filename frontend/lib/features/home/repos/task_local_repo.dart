@@ -96,6 +96,18 @@ class TaskLocalRepo
   }
 
 
+  Future<void> deleteTask (String taskId) async
+  {
+    final db = await database;
+
+    await db.delete(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
+  }
+
+
   Future<List<TaskModel>> getUnsyncedTasks () async
   {
     final db = await database;
