@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/features/auth/cubit/auth_cubit.dart';
+import 'package:frontend/features/auth/cubits/auth_cubit.dart';
 
 import 'package:frontend/features/auth/pages/signup_page.dart';
 import 'package:frontend/features/home/pages/home_page.dart';
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage>
             );
           }
 
-          if (state is AuthLoggedIn)
+          else if (state is AuthLoggedIn)
           {
             Navigator.pushReplacement(context, HomePage.route());
 
@@ -133,85 +133,87 @@ class _LoginPageState extends State<LoginPage>
             );
           }
 
-          return Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-              
-                  const Spacer(flex: 12,),
-                  Text(
-                    "Log In.",
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 3,
-                    ),
-                  ),
-                  const Spacer(flex: 2,),
-              
-                  TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      hintText: "Enter email",
-                    ),
-                    validator: validateEmail,
-                  ),
-                  const Spacer(flex: 1,),
-              
-                  TextFormField(
-                    obscureText: true,
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      hintText: "Enter password",
-                    ),
-                    validator: validatePassword,
-                  ),
-                  const Spacer(flex: 2,),
-              
-                  ElevatedButton(
-                    onPressed: loginUser,
-                    child: Text(
-                      "LOG IN",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-              
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushReplacement(SignupPage.route());
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: "Don't have an account? ",
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                  
+                      const SizedBox(height: 125,),
+                      Text(
+                        "Log In.",
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 3,
                         ),
-                        children: [
-                          TextSpan(
-                            text: "Sign Up",
-                            style: TextStyle(
-                              // fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
+                      const SizedBox(height: 30,),
+                  
+                      TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                          hintText: "Enter email",
+                        ),
+                        validator: validateEmail,
+                      ),
+                      const SizedBox(height: 15,),
+                  
+                      TextFormField(
+                        obscureText: true,
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          hintText: "Enter password",
+                        ),
+                        validator: validatePassword,
+                      ),
+                      const SizedBox(height: 30,),
+                  
+                      ElevatedButton(
+                        onPressed: loginUser,
+                        child: Text(
+                          "LOG IN",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10,),
+                  
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(SignupPage.route());
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            text: "Don't have an account? ",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "Sign Up",
+                                style: TextStyle(
+                                  // fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  
+                    ],
                   ),
-              
-                  const Spacer(flex: 12,),
-              
-                ],
+                ),
               ),
             ),
           );

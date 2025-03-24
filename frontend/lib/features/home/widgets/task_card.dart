@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+
+
+class TaskCard extends StatelessWidget
+{
+  final String title;
+  final String description;
+  final Color colour;
+  
+  const TaskCard({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.colour,
+  });
+
+
+  @override
+  Widget build (BuildContext context)
+  {
+    return Card(
+      color: colour,
+      shadowColor: colour,
+      elevation: 1.5,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.3,
+              ),
+            ),
+
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+
+          ],
+        ),
+      ),
+    );
+  }
+}

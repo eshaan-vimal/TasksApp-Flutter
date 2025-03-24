@@ -43,8 +43,8 @@ class UserModel
       'id': id,
       'email': email,
       'name': name,
-      'createdAt': createdAt.toString(),
-      'updatedAt': updatedAt.toString(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 

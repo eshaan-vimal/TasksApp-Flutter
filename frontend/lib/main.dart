@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:frontend/features/auth/cubit/auth_cubit.dart';
+import 'package:frontend/features/auth/cubits/auth_cubit.dart';
+import 'package:frontend/features/home/cubits/task_cubit.dart';
 import 'package:frontend/features/auth/pages/login_page.dart';
 import 'package:frontend/features/home/pages/home_page.dart';
 
@@ -11,7 +12,8 @@ void main ()
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(create: (_) => TaskCubit())
       ],
       child: const MyApp(),
     )
@@ -50,6 +52,8 @@ class _MyAppState extends State<MyApp>
     return MaterialApp(
       title: "Tasks App",
       theme: ThemeData(
+
+        fontFamily: "Lato",
 
         inputDecorationTheme: InputDecorationTheme(
 

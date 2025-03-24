@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:frontend/features/auth/repos/auth_remote_repo.dart';
-import 'package:frontend/core/services/storage_service.dart';
 import 'package:frontend/models/user_model.dart';
 
 part 'auth_state.dart';
@@ -10,7 +9,6 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState>
 {
   final authRemoteRepo = AuthRemoteRepo();
-  final storageService = StorageService();
 
   AuthCubit() : super(AuthInitial());
 
@@ -56,11 +54,6 @@ class AuthCubit extends Cubit<AuthState>
         email: email, 
         password: password
       );
-
-      if (user.token?.isNotEmpty ?? false)
-      {
-        storageService.setToken(user.token!);
-      }
 
       emit(AuthLoggedIn(user));
     }

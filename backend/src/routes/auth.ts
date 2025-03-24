@@ -94,39 +94,6 @@ authRouter.post('/login', async (req: Request<{},{},LoginBody>, res) =>
 });
 
 
-authRouter.post('/istokenvalid', async (req, res) => 
-{
-    try
-    {
-        const token = req.header('x-auth-token');
-
-        if (!token)
-        {
-            res.status(400).json(false);
-            return;
-        }
-
-        const verified = jwt.verify(token, process.env.JWT_KEY!);
-
-        if (!verified)
-        {
-            res.status(401).json(false);
-            return;
-        }
-
-        const verifiedToken = verified as {id: string};
-
-        const [user] = await db.select().from(users).where(eq(users.id, verifiedToken.id));
-
-        res.status(200).json(true);
-    }
-    catch (error)
-    {
-        res.status(500).json(false);
-    }
-});
-
-
 authRouter.get('/', auth, async (req: AuthRequest, res) => 
 {
     try
@@ -146,6 +113,39 @@ authRouter.get('/', auth, async (req: AuthRequest, res) =>
         res.status(500).json({error: error.message});
     }
 });
+
+
+// authRouter.post('/istokenvalid', async (req, res) => 
+// {
+//     try
+//     {
+//         const token = req.header('x-auth-token');
+
+//         if (!token)
+//         {
+//             res.status(400).json(false);
+//             return;
+//         }
+
+//         const verified = jwt.verify(token, process.env.JWT_KEY!);
+
+//         if (!verified)
+//         {
+//             res.status(401).json(false);
+//             return;
+//         }
+
+//         const verifiedToken = verified as {id: string};
+
+//         const [user] = await db.select().from(users).where(eq(users.id, verifiedToken.id));
+
+//         res.status(200).json(true);
+//     }
+//     catch (error)
+//     {
+//         res.status(500).json(false);
+//     }
+// });
 
 
 export default authRouter;

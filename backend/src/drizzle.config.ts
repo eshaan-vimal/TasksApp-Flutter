@@ -14,11 +14,11 @@ dotenv.config({path: path.resolve(__dirname, "../.env")});
 
 export default defineConfig({
     dialect: "postgresql",
-    schema: "./models/user.ts",
+    schema: "./models/*.ts",
     out: "./drizzle",
     dbCredentials: {
         host: "localhost",
-        port: Number(process.env.DB_PORT) || 5432,
+        port: Number(process.env.DB_HOST_PORT) || 5432,
         database: process.env.DB_NAME!,
         user: process.env.DB_USER!,
         password: process.env.DB_PASSWORD!,

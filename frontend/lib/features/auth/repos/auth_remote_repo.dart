@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'package:frontend/core/constants/constants.dart';
 import 'package:frontend/models/user_model.dart';
 import 'package:frontend/core/services/storage_service.dart';
+import 'package:frontend/features/auth/repos/auth_local_repo.dart';
 
 
 class AuthRemoteRepo
 {
   final storageService = StorageService();
+  final authLocalRepo = AuthLocalRepo();
 
 
   Future<UserModel> signup({
@@ -40,7 +42,7 @@ class AuthRemoteRepo
     }
     catch (error)
     {
-      throw error.toString();
+      rethrow;
     }
   }
 
@@ -68,11 +70,19 @@ class AuthRemoteRepo
         throw jsonDecode(res.body)['error'];
       }
 
-      return UserModel.fromJson(res.body);
+      final user = UserModel.fromJson(res.body);
+
+      if (user.token?.isNotEmpty ?? false)
+      {
+        storageService.setToken(user.token!);
+      }
+      await authLocalRepo.insertUser(user);
+
+      return user;
     }
     catch (error)
     {
-      throw error.toString();
+      rethrow;
     }
   }
 
@@ -94,7 +104,7 @@ class AuthRemoteRepo
           'Content-Type': 'application/json',
           'x-auth-token': token,
         },
-      );
+      ).timeout(Duration(seconds: 3));
 
       if (res.statusCode != 200)
       {
@@ -105,7 +115,14 @@ class AuthRemoteRepo
     }
     catch (error)
     {
-      throw error.toString();
+      final user = await authLocalRepo.getUser();
+
+      if (user != null)
+      {
+        return user;
+      }
+      
+      rethrow;
     }
   }
 }
