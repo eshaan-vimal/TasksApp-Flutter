@@ -97,71 +97,6 @@ class _NewTaskPageState extends State<NewTaskPage>
             letterSpacing: 2,
           ),
         ),
-        actions: [
-
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-
-              GestureDetector(
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context, 
-                    firstDate: DateTime.now(), 
-                    lastDate: DateTime.now().add(Duration(days: 90)),
-                  );
-                  setState(() {
-                    if (date != null)
-                    {
-                      selectedDate = date;
-                    }
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0, bottom: 2),
-                  child: Text(
-                    DateFormat('dd-MM-yyyy').format(selectedDate),
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-
-              GestureDetector(
-                onTap: () async {
-                  final time = await showTimePicker(
-                    context: context, 
-                    initialTime: TimeOfDay.now(),
-                  );
-                  setState(() {
-                    if (time != null)
-                    {
-                      selectedDate = DateTime(
-                        selectedDate.year,
-                        selectedDate.month,
-                        selectedDate.day,
-                        time.hour,
-                        time.minute,
-                      );
-                    }
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0, top: 2),
-                  child: Text(
-                    DateFormat('hh:mm a').format(selectedDate),
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-              
-            ],
-          ),
-
-        ],
       ),
 
       body: SafeArea(
@@ -205,6 +140,101 @@ class _NewTaskPageState extends State<NewTaskPage>
                   key: formKey,
                   child: Column(
                     children: [
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+
+                          GestureDetector(
+                            onTap: () async {
+                              final date = await showDatePicker(
+                                context: context, 
+                                firstDate: DateTime.now(), 
+                                lastDate: DateTime.now().add(Duration(days: 90)),
+                              );
+                              setState(() {
+                                if (date != null)
+                                {
+                                  selectedDate = date;
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 10.0),
+                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Colors.grey.shade300,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.calendar_today_outlined, size: 18, color: Theme.of(context).primaryColor),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    DateFormat('dd-MM-yyyy').format(selectedDate),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          
+                          GestureDetector(
+                            onTap: () async {
+                              final time = await showTimePicker(
+                                context: context, 
+                                initialTime: TimeOfDay.now(),
+                              );
+                              setState(() {
+                                if (time != null)
+                                {
+                                  selectedDate = DateTime(
+                                    selectedDate.year,
+                                    selectedDate.month,
+                                    selectedDate.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 10.0),
+                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Colors.grey.shade300,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.access_time_outlined, size: 18, color: Theme.of(context).primaryColor),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    DateFormat('hh:mm a').format(selectedDate),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
                             
                       TextFormField(
                         controller: titleController,
