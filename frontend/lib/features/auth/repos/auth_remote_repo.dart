@@ -31,7 +31,7 @@ class AuthRemoteRepo
           'email': email,
           'password': password,
         }),
-      );
+      ).timeout(Duration(seconds: 5));
 
       if (res.statusCode != 201)
       {
@@ -63,22 +63,14 @@ class AuthRemoteRepo
           'email': email,
           'password': password,
         }),
-      );
+      ).timeout(Duration(seconds: 5));
 
       if (res.statusCode != 200)
       {
         throw jsonDecode(res.body)['error'];
       }
 
-      final user = UserModel.fromJson(res.body);
-
-      if (user.token?.isNotEmpty ?? false)
-      {
-        storageService.setToken(user.token!);
-      }
-      await authLocalRepo.insertUser(user);
-
-      return user;
+      return UserModel.fromJson(res.body);
     }
     catch (error)
     {
@@ -114,14 +106,7 @@ class AuthRemoteRepo
       return UserModel.fromJson(res.body);
     }
     catch (error)
-    {
-      final user = await authLocalRepo.getUser();
-
-      if (user != null)
-      {
-        return user;
-      }
-      
+    { 
       rethrow;
     }
   }

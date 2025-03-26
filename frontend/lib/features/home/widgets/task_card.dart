@@ -23,7 +23,7 @@ class TaskCard extends StatelessWidget
       shadowColor: colour,
       elevation: 1.5,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +31,7 @@ class TaskCard extends StatelessWidget
 
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.3,
@@ -40,7 +40,7 @@ class TaskCard extends StatelessWidget
 
             Text(
               description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
               ),
               maxLines: 4,

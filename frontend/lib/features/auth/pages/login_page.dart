@@ -102,24 +102,38 @@ class _LoginPageState extends State<LoginPage>
 
         listener: (context, state) {
 
-          if (state is AuthError)
+          if (state is AuthLoggedIn)
+          {
+            Navigator.pushReplacement(context, HomePage.route());
+
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text("Log in successful!"),
+            //   )
+            // );
+          }
+
+          else if (state is AuthLoggedOut)
           {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
+              const SnackBar(
+                content: Center(
+                  child: Text("Logout succesful!"),
+                )
               )
             );
           }
 
-          else if (state is AuthLoggedIn)
+          if (state is AuthError)
           {
-            Navigator.pushReplacement(context, HomePage.route());
-
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text("Log in successful!"),
+                content: Center(
+                  child: Text("Login failed"),
+                ),
               )
             );
+            print(state.error);
           }
 
         },
@@ -128,92 +142,87 @@ class _LoginPageState extends State<LoginPage>
 
           if (state is AuthLoading)
           {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator.adaptive(),
             );
           }
 
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                  
-                      const SizedBox(height: 125,),
-                      Text(
-                        "Log In.",
-                        style: TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 3,
-                        ),
-                      ),
-                      const SizedBox(height: 30,),
-                  
-                      TextFormField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          hintText: "Enter email",
-                        ),
-                        validator: validateEmail,
-                      ),
-                      const SizedBox(height: 15,),
-                  
-                      TextFormField(
-                        obscureText: true,
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          hintText: "Enter password",
-                        ),
-                        validator: validatePassword,
-                      ),
-                      const SizedBox(height: 30,),
-                  
-                      ElevatedButton(
-                        onPressed: loginUser,
-                        child: Text(
-                          "LOG IN",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10,),
-                  
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushReplacement(SignupPage.route());
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            text: "Don't have an account? ",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Sign Up",
-                                style: TextStyle(
-                                  // fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  
-                    ],
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+              
+                  const Text(
+                    "Log In.",
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 30,),
+              
+                  TextFormField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter email",
+                    ),
+                    validator: validateEmail,
+                  ),
+                  const SizedBox(height: 15,),
+              
+                  TextFormField(
+                    obscureText: true,
+                    controller: passwordController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter password",
+                    ),
+                    validator: validatePassword,
+                  ),
+                  const SizedBox(height: 30,),
+              
+                  ElevatedButton(
+                    onPressed: loginUser,
+                    child: const Text(
+                      "LOG IN",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+              
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(SignupPage.route());
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Sign Up",
+                            style: TextStyle(
+                              // fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              
+                ],
               ),
             ),
           );

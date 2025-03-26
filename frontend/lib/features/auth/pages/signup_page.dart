@@ -123,20 +123,24 @@ class _SignupPageState extends State<SignupPage>
 
         listener: (context, state) {
 
-          if (state is AuthError)
+          if (state is AuthSignedUp)
           {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
+              const SnackBar(
+                content: Center(
+                  child: Text("Sign up successfull!"),
+                ),
               )
             );
           }
 
-          else if (state is AuthSignedUp)
+          else if (state is AuthError)
           {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Sign up successfull!"),
+              SnackBar(
+                content: Center(
+                  child: Text(state.error),
+                ),
               )
             );
           }
@@ -152,108 +156,103 @@ class _SignupPageState extends State<SignupPage>
             );
           }
 
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                  
-                      const SizedBox(height: 75,),
-                      const Text(
-                        "Sign Up.",
-                        style: TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 3,
-                        ),
-                      ),
-                      const SizedBox(height: 30,),
-                  
-                      TextFormField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          hintText: "Enter name",
-                        ),
-                        validator: validateName,
-                      ),
-                      const SizedBox(height: 15,),
-                  
-                      TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          hintText: "Enter email",
-                        ),
-                        validator: validateEmail,
-                      ),
-                      const SizedBox(height: 15,),
-                  
-                      TextFormField(
-                        obscureText: true,
-                        controller: password1Controller,
-                        decoration: const InputDecoration(
-                          hintText: "Enter password",
-                        ),
-                      ),
-                      const SizedBox(height: 15,),
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
               
-                      TextFormField(
-                        obscureText: true,
-                        controller: password2Controller,
-                        decoration: const InputDecoration(
-                          hintText: "Confirm password",
-                        ),
-                        validator: validatePassword,
-                      ),
-                      const SizedBox(height: 30,),
-                  
-                      ElevatedButton(
-                        onPressed: () {
-                          signupUser();
-                        },
-                        child: const Text(
-                          "SIGN UP",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10,),
-                  
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushReplacement(LoginPage.route());
-                        },
-                        child: RichText(
-                          text: const TextSpan(
-                            text: "Already have an account? ",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Log In",
-                                style: TextStyle(
-                                  // fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  
-                    ],
+                  const Text(
+                    "Sign Up.",
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 30,),
+              
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter name",
+                    ),
+                    validator: validateName,
+                  ),
+                  const SizedBox(height: 15,),
+              
+                  TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter email",
+                    ),
+                    validator: validateEmail,
+                  ),
+                  const SizedBox(height: 15,),
+              
+                  TextFormField(
+                    obscureText: true,
+                    controller: password1Controller,
+                    decoration: const InputDecoration(
+                      hintText: "Enter password",
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+          
+                  TextFormField(
+                    obscureText: true,
+                    controller: password2Controller,
+                    decoration: const InputDecoration(
+                      hintText: "Confirm password",
+                    ),
+                    validator: validatePassword,
+                  ),
+                  const SizedBox(height: 30,),
+              
+                  ElevatedButton(
+                    onPressed: () {
+                      signupUser();
+                    },
+                    child: const Text(
+                      "SIGN UP",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+              
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(LoginPage.route());
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        text: "Already have an account? ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Log In",
+                            style: TextStyle(
+                              // fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              
+                ],
               ),
             ),
           );

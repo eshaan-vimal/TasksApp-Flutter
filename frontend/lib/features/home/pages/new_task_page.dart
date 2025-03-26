@@ -57,7 +57,9 @@ class _NewTaskPageState extends State<NewTaskPage>
     if (formKey.currentState!.validate())
     {
       final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
-      context.read<TaskCubit>().newTask(
+      final taskCubit = context.read<TaskCubit>();
+
+      taskCubit.newTask(
         token: authCreds.user.token!, 
         uid: authCreds.user.id,
         title: titleController.text.trim(), 
@@ -65,6 +67,8 @@ class _NewTaskPageState extends State<NewTaskPage>
         colour: selectedColour, 
         dueAt: selectedDate,
       );
+
+      await taskCubit.getTasks(token: authCreds.user.token!);
     }
   }
 
@@ -90,7 +94,7 @@ class _NewTaskPageState extends State<NewTaskPage>
     return Scaffold(
 
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add New Task',
           style: TextStyle(
             fontSize: 25,
@@ -107,7 +111,9 @@ class _NewTaskPageState extends State<NewTaskPage>
             {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.error),
+                  content: Center(
+                    child: Text(state.error),
+                  ),
                 )
               );
             }
@@ -116,7 +122,9 @@ class _NewTaskPageState extends State<NewTaskPage>
             {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("New task added successfully!"),
+                  content: Center(
+                    child: Text("New task added successfully!"),
+                  ),
                 )
               );
 
@@ -160,23 +168,29 @@ class _NewTaskPageState extends State<NewTaskPage>
                               });
                             },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 10.0),
-                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 2,
-                                  color: Colors.grey.shade300,
+                              margin: const EdgeInsets.only(bottom: 10.0),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              decoration: const BoxDecoration(
+                                border: Border.symmetric(
+                                  vertical: BorderSide(
+                                    width: 2,
+                                    color: Color.fromRGBO(224, 224, 224, 1),
+                                  ),
+                                  horizontal: BorderSide(
+                                    width: 2,
+                                    color: Color.fromRGBO(224, 224, 224, 1),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.calendar_today_outlined, size: 18, color: Theme.of(context).primaryColor),
-                                  SizedBox(width: 8),
+                                  const Icon(Icons.calendar_today_outlined, size: 18),
+                                  const SizedBox(width: 8),
                                   Text(
                                     DateFormat('dd-MM-yyyy').format(selectedDate),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -207,23 +221,29 @@ class _NewTaskPageState extends State<NewTaskPage>
                               });
                             },
                             child: Container(
-                              margin: EdgeInsets.only(bottom: 10.0),
-                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 2,
-                                  color: Colors.grey.shade300,
+                              margin: const EdgeInsets.only(bottom: 10.0),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              decoration: const BoxDecoration(
+                                border: Border.symmetric(
+                                  vertical: BorderSide(
+                                    width: 2,
+                                    color: Color.fromRGBO(224, 224, 224, 1),
+                                  ),
+                                  horizontal: BorderSide(
+                                    width: 2,
+                                    color: Color.fromRGBO(224, 224, 224, 1),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.access_time_outlined, size: 18, color: Theme.of(context).primaryColor),
-                                  SizedBox(width: 8),
+                                  const Icon(Icons.access_time_outlined, size: 18),
+                                  const SizedBox(width: 8),
                                   Text(
                                     DateFormat('hh:mm a').format(selectedDate),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -239,7 +259,7 @@ class _NewTaskPageState extends State<NewTaskPage>
                       TextFormField(
                         controller: titleController,
                          validator: validateTitle,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Title',
                         ),
                       ),
@@ -248,7 +268,7 @@ class _NewTaskPageState extends State<NewTaskPage>
                       TextFormField(
                         controller: descriptionController,
                         validator: validateDescription,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Description',
                         ),
                         maxLines: 4,

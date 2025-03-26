@@ -1,17 +1,11 @@
 import 'dart:convert';
-import 'package:uuid/uuid.dart';
-import 'package:frontend/core/constants/utils.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:frontend/core/constants/constants.dart';
 import 'package:frontend/models/task_model.dart';
-import 'package:frontend/features/home/repos/task_local_repo.dart';
-
 
 class TaskRemoteRepo 
 {
-  final taskLocalRepo = TaskLocalRepo();
-
 
   Future<TaskModel> newTask ({
     required String token,
@@ -44,33 +38,12 @@ class TaskRemoteRepo
       }
 
       final newTask = TaskModel.fromJson(res.body);
-      await taskLocalRepo.insertTask(newTask);
 
       return newTask;
     }
     catch (error)
     {
-      try
-      {
-        final newTask = TaskModel(
-          id: const Uuid().v4(),
-          title: title,
-          description: description,
-          colour: hexToRgb(hexColour),
-          uid: uid,
-          dueAt: dueAt,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-          isSynced: 0,
-        );
-
-        await taskLocalRepo.insertTask(newTask);
-        return newTask;
-      }
-      catch (error)
-      {
-        rethrow;
-      }
+      rethrow;
     }
   }
 
@@ -102,19 +75,10 @@ class TaskRemoteRepo
         tasksList.add(TaskModel.fromMap(task));
       }
 
-      await taskLocalRepo.insertTasks(tasksList);
-
       return tasksList;
     }
     catch (error)
     {
-      final tasks = await taskLocalRepo.getTasks();
-
-      if (tasks.isNotEmpty)
-      {
-        return tasks;
-      }
-
       rethrow;
     }
   }
@@ -142,8 +106,6 @@ class TaskRemoteRepo
       {
         throw jsonDecode(res.body)['error'];
       }
-
-      // await taskLocalRepo.deleteTask(taskId);
     }
     catch (error)
     {
@@ -152,7 +114,7 @@ class TaskRemoteRepo
   }
 
 
-  Future<bool> syncTasks ({
+  Future<List<TaskModel>?> syncTasks ({
     required String token,
     required List<TaskModel> unsyncedTasks,
   }) async
@@ -176,15 +138,17 @@ class TaskRemoteRepo
 
       if (res.statusCode != 201)
       {
-        return false;
+        return null;
       }
 
-    
-      return true;
+      final List<dynamic> returnedTasks = jsonDecode(res.body);
+      final syncedTasks = returnedTasks.map((syncedTask) => TaskModel.fromMap(syncedTask)).toList();
+
+      return syncedTasks;
     }
     catch (error)
     {
-      return false;
+      return null;
     }
   }
 }

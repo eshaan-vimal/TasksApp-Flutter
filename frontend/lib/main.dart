@@ -94,18 +94,7 @@ class _MyAppState extends State<MyApp>
         ),
 
       ),
-      home: BlocConsumer<AuthCubit,AuthState>(
-
-        listener: (context, state) {
-          if (state is AuthError)
-          {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
-              )
-            );
-          }
-        },
+      home: BlocBuilder<AuthCubit,AuthState>(
 
         builder: (context, state) {
           if (state is AuthLoggedIn)

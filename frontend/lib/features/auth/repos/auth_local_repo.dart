@@ -64,4 +64,12 @@ class AuthLocalRepo
 
     return null;
   }
+
+
+  Future<void> deleteUserTable () async
+  {
+    final db = await database;
+
+    await db.delete(tableName);
+  }
 }

@@ -12,8 +12,15 @@ class StorageService
     await _storage.write(key: _jwtKey, value: token);
   }
 
+
   Future<String?> getToken () async
   {
     return _storage.read(key: _jwtKey);
+  }
+
+
+  Future<void> deleteToken () async 
+  {
+    await _storage.delete(key: _jwtKey);
   }
 }

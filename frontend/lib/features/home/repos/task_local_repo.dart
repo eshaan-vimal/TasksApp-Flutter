@@ -129,15 +129,44 @@ class TaskLocalRepo
   }
 
 
-  Future<void> updateSyncStatus (String id, int status) async
+  // Future<void> updateSyncStatus (String id, int status) async
+  // {
+  //   final db = await database;
+
+  //   await db.update(
+  //     tableName, 
+  //     {'isSynced': status},
+  //     where: 'id = ?',
+  //     whereArgs: [id],
+  //   );
+  // }
+
+
+  Future<void> updateTaskId({
+    required String oldId,
+    required TaskModel syncedTask,
+  }) async 
+  {
+    final db = await database;
+    
+    await db.transaction((txn) async {
+      await txn.delete(
+        tableName, 
+        where: 'id = ?', 
+        whereArgs: [oldId],
+      );
+      await txn.insert(
+        tableName, 
+        syncedTask.toMap(),
+      );
+    });
+  }
+
+
+  Future<void> deleteTaskTable () async
   {
     final db = await database;
 
-    await db.update(
-      tableName, 
-      {'isSynced': status},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete(tableName);
   }
 }

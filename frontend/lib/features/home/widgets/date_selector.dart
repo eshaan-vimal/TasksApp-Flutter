@@ -50,7 +50,7 @@ class _DateSelectorState extends State<DateSelector>
         
             Text(
               month.toUpperCase(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 2,
@@ -91,14 +91,14 @@ class _DateSelectorState extends State<DateSelector>
                 child: SizedBox(
                   width: 85,
                   child: Card(
-                    color: isSelected ? Colors.deepOrange : null,
-                    margin: EdgeInsets.all(5),
+                    color: isSelected ? const Color.fromRGBO(255, 87, 34, 1) : null,
+                    margin: const EdgeInsets.all(5.0),
                     shape: RoundedRectangleBorder(
                       side: BorderSide(
                         width: 1.5,
-                        color: isSelected ? Colors.deepOrange : Colors.grey.shade400,
+                        color: isSelected ? const Color.fromRGBO(255, 87, 34, 1) : const Color.fromRGBO(189, 189, 189, 1),
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
@@ -110,7 +110,7 @@ class _DateSelectorState extends State<DateSelector>
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : null,
+                              color: isSelected ? const Color.fromRGBO(255, 255, 255, 1) : null,
                             ),
                           ),
                           const Spacer(),
@@ -121,7 +121,7 @@ class _DateSelectorState extends State<DateSelector>
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.5,
-                              color: isSelected ? Colors.white70 : null,
+                              color: isSelected ? const Color.fromRGBO(255, 255, 255, 0.702) : null,
                             ),
                           ),
                 

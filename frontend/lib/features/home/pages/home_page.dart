@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/features/auth/pages/login_page.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -29,6 +30,14 @@ class _HomePageState extends State<HomePage>
   DateTime selectedDate = DateTime.now();
 
 
+  void logOut ()
+  {
+    context.read<AuthCubit>().logout();
+
+    Navigator.pushAndRemoveUntil(context, LoginPage.route(), (_) => false);
+  }
+
+
   void deleteTask (String id) async
   {
     final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
@@ -39,7 +48,7 @@ class _HomePageState extends State<HomePage>
       taskId: id,
     );
 
-    taskCubit.getTasks(token: authCreds.user.token!);
+    await taskCubit.getTasks(token: authCreds.user.token!);
   }
 
 
@@ -55,13 +64,11 @@ class _HomePageState extends State<HomePage>
       if (data.contains(ConnectivityResult.wifi))
       {
         await taskCubit.syncTasks(authCreds.user.token!);
-        taskCubit.getTasks(token: authCreds.user.token!);
-      }
-      else
-      {
-        taskCubit.getTasks(token: authCreds.user.token!);
+        await taskCubit.getTasks(token: authCreds.user.token!);
       }
     });
+
+    taskCubit.getTasks(token: authCreds.user.token!);
   }
 
   @override
@@ -70,7 +77,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
 
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'My Tasks',
           style: TextStyle(
             fontSize: 25,
@@ -78,12 +85,19 @@ class _HomePageState extends State<HomePage>
           ),
         ),
         actions: [
+
           IconButton(
             onPressed: () {
               Navigator.push(context, NewTaskPage.route());
             }, 
             icon: const Icon(Icons.add),
           ),
+
+          IconButton(
+            onPressed: logOut,
+            icon: const Icon(Icons.logout_rounded),
+          ),
+
         ],
       ),
 
@@ -92,35 +106,40 @@ class _HomePageState extends State<HomePage>
         child: BlocConsumer<TaskCubit,TaskState>(
           listener: (context, state) {
 
-            if (state is TaskError)
-            {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error),
-                )
-              );
-            }
-
             if (state is TaskDelete)
             {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Task deleted successfully!"),
+                  content: Center(
+                    child: Text("Task deleted successfully!"),
+                  ),
+                )
+              );
+            }
+
+            else if (state is TaskError)
+            {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Center(
+                    child: Text(state.error),
+                  ),
                 )
               );
             }
 
           },
+
           builder: (context, state) {
 
             if (state is TaskLoading)
             {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator.adaptive(),
               );
             }
 
-            else if (state is GetTasksSuccess)
+            if (state is GetTasksSuccess)
             {
               final tasks = state.tasksList.where((task) => (
                 DateFormat('d').format(task.dueAt) == DateFormat('d').format(selectedDate) &&
@@ -142,7 +161,7 @@ class _HomePageState extends State<HomePage>
                       },
                     ),
 
-                    Expanded(
+                    const Expanded(
                       child: Center(
                         child: Text(
                           "Add a new task",
@@ -169,7 +188,7 @@ class _HomePageState extends State<HomePage>
                       });
                     },
                   ),
-                  SizedBox(height: 18,),
+                  const SizedBox(height: 18,),
               
                   Expanded(
                     child: ListView.builder(
@@ -189,8 +208,8 @@ class _HomePageState extends State<HomePage>
                                 SlidableAction(
                                   onPressed: (_) => deleteTask(task.id),
                                   flex: 1,
-                                  backgroundColor: Colors.redAccent,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: const Color.fromRGBO(255, 82, 82, 1),
+                                  foregroundColor: const Color.fromRGBO(255, 255, 255, 1),
                                   borderRadius: const BorderRadius.all(Radius.circular(12.0)),
                                   icon: Icons.delete,
                                   label: 'Delete'
@@ -210,24 +229,24 @@ class _HomePageState extends State<HomePage>
                                 ),
                             
                                 Container(
-                                  margin: EdgeInsets.only(left: 10, right: 5),
+                                  margin: const EdgeInsets.only(left: 10, right: 5),
                                   height: 10,
                                   width: 10,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    borderRadius: const BorderRadius.all(Radius.circular(5)),
                                     color: strengthenColour(task.colour, 0.7),
                                   ),
                                 ),
                             
                                 Text(
                                   DateFormat('hh:mm a').format(task.dueAt),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
                                   ),
                                 ),
-                                SizedBox(width: 10,),
+                                const SizedBox(width: 10,),
                             
                               ],
                             ),
@@ -240,7 +259,11 @@ class _HomePageState extends State<HomePage>
               );
             }
 
-            return Text("Weird");
+            return const Center(
+              child: Text(
+                "Spooky",
+              ),
+            );
 
           }
         ),

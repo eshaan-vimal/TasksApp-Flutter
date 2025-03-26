@@ -90,8 +90,10 @@ taskRouter.post('/sync', auth, async (req: AuthRequest, res) =>
     
         for (let unsyncedTask of unsyncedTasks)
         {
+            const {id, ...rest} = unsyncedTask;
+
             unsyncedTask = {
-                ...unsyncedTask, 
+                ...rest, 
                 uid: req.user,
                 dueAt: new Date(unsyncedTask.dueAt), 
                 createdAt: new Date(unsyncedTask.createdAt),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/core/constants/utils.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:frontend/features/home/repos/task_remote_repo.dart';
 import 'package:frontend/features/home/repos/task_local_repo.dart';
 import 'package:frontend/models/task_model.dart';
+import 'package:frontend/core/constants/utils.dart';
 
 part 'task_state.dart';
 
@@ -13,6 +14,8 @@ class TaskCubit extends Cubit<TaskState>
 {
   final taskRemoteRepo = TaskRemoteRepo();
   final taskLocalRepo = TaskLocalRepo();
+
+  bool _isSyncing = false;
 
   TaskCubit () : super (TaskInitial());
 
@@ -30,7 +33,7 @@ class TaskCubit extends Cubit<TaskState>
     {
       emit(TaskLoading());
 
-      await taskRemoteRepo.newTask(
+      final newTask = await taskRemoteRepo.newTask(
         token: token, 
         uid: uid,
         title: title, 
@@ -38,17 +41,38 @@ class TaskCubit extends Cubit<TaskState>
         hexColour: rgbToHex(colour), 
         dueAt: dueAt
       );
+      await taskLocalRepo.insertTask(newTask);
 
       emit(NewTaskSuccess());
     }
     catch (error)
     {
-      emit(TaskError(error.toString()));
+      try
+      {
+        final newTask = TaskModel(
+          id: const Uuid().v4(),
+          title: title,
+          description: description,
+          colour: colour,
+          uid: uid,
+          dueAt: dueAt,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isSynced: 0,
+        );
+        await taskLocalRepo.insertTask(newTask);
+
+        emit(NewTaskSuccess());
+      }
+      catch (error)
+      {
+        emit(TaskError(error.toString()));
+      }
     }
   }
 
 
-  void getTasks ({
+  Future<void> getTasks ({
     required String token,
   }) async
   {
@@ -57,12 +81,28 @@ class TaskCubit extends Cubit<TaskState>
       emit(TaskLoading());
 
       final tasksList = await taskRemoteRepo.getTasks(token: token);
+      await taskLocalRepo.insertTasks(tasksList);
 
       emit(GetTasksSuccess(tasksList));
     }
     catch (error)
     {
-      emit(TaskError(error.toString()));
+      try
+      {
+        final tasksList = await taskLocalRepo.getTasks();
+
+        if (tasksList.isEmpty)
+        {
+          emit(TaskError("No tasks found"));
+          return;
+        }
+
+        emit(GetTasksSuccess(tasksList));
+      }
+      catch (error)
+      {
+        emit(TaskError(error.toString()));
+      }
     }
   }
 
@@ -80,6 +120,7 @@ class TaskCubit extends Cubit<TaskState>
         token: token,
         taskId: taskId,
       );
+      await taskLocalRepo.deleteTask(taskId);
 
       emit(TaskDelete());
     }
@@ -92,24 +133,52 @@ class TaskCubit extends Cubit<TaskState>
 
   Future<void> syncTasks (String token) async
   {
-    final unsyncedTasks = await taskLocalRepo.getUnsyncedTasks();
-    if (unsyncedTasks.isEmpty)
+    try
     {
-      return;
-    }
-
-    bool isSynced = await taskRemoteRepo.syncTasks(
-      token: token, 
-      unsyncedTasks: unsyncedTasks
-    );
-
-    if (isSynced)
-    {
-      for (final task in unsyncedTasks)
+      if (_isSyncing)
       {
-        await taskLocalRepo.updateSyncStatus(task.id, 1);
+        return;
       }
-      print("Synced");
+
+      _isSyncing = true;
+
+      final unsyncedTasks = await taskLocalRepo.getUnsyncedTasks();
+      if (unsyncedTasks.isEmpty)
+      {
+        return;
+      }
+
+      final List<TaskModel>? syncedTasks = await taskRemoteRepo.syncTasks(
+        token: token, 
+        unsyncedTasks: unsyncedTasks
+      );
+
+      if (syncedTasks == null || syncedTasks.length != unsyncedTasks.length)
+      {
+        print("Sync failed");
+        return;
+      }
+
+      for (int i = 0; i < syncedTasks.length; i++)
+      {
+        final localTask = unsyncedTasks[i];
+        final remoteTask = syncedTasks[i];
+
+        await taskLocalRepo.updateTaskId(
+          oldId: localTask.id, 
+          syncedTask: remoteTask,
+        );
+      }
+
+      print("Sync successful");
+    }
+    catch (error)
+    {
+      emit(TaskError(error.toString()));
+    }
+    finally
+    {
+      _isSyncing = false;
     }
   }
 }
