@@ -1,12 +1,12 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend/features/auth/pages/login_page.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:frontend/features/auth/cubits/auth_cubit.dart';
 import 'package:frontend/features/home/cubits/task_cubit.dart';
+import 'package:frontend/core/services/connectivity_service.dart';
+import 'package:frontend/features/auth/pages/login_page.dart';
 import 'package:frontend/features/home/pages/new_task_page.dart';
 import 'package:frontend/features/home/widgets/date_selector.dart';
 import 'package:frontend/features/home/widgets/task_card.dart';
@@ -28,6 +28,8 @@ class HomePage extends StatefulWidget
 class _HomePageState extends State<HomePage>
 {
   DateTime selectedDate = DateTime.now();
+
+  bool hasSynced = false;
 
 
   void logOut ()
@@ -60,15 +62,17 @@ class _HomePageState extends State<HomePage>
     final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
     final taskCubit = context.read<TaskCubit>();
 
-    Connectivity().onConnectivityChanged.listen((data) async {
-      if (data.contains(ConnectivityResult.wifi))
+    ConnectivityService().isOnline.then((isOnline) async {
+      if (isOnline)
       {
-        await taskCubit.syncTasks(authCreds.user.token!);
-        await taskCubit.getTasks(token: authCreds.user.token!);
+        await taskCubit.syncTasks(token: authCreds.user.token!);
+        taskCubit.getTasks(token: authCreds.user.token!);
+      } 
+      else 
+      {
+        taskCubit.getTasks(token: authCreds.user.token!);
       }
     });
-
-    taskCubit.getTasks(token: authCreds.user.token!);
   }
 
   @override

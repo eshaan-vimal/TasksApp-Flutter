@@ -19,6 +19,8 @@ taskRouter.post('/', auth, async (req: AuthRequest, res) =>
             return;
         }
 
+        console.log(req.body);
+
         req.body = {...req.body, dueAt: new Date(req.body.dueAt), uid: req.user};
         const newTask: NewTask = req.body;
 
@@ -75,7 +77,7 @@ taskRouter.delete('/', auth, async (req: AuthRequest, res) =>
 });
 
 
-taskRouter.post('/sync', auth, async (req: AuthRequest, res) =>
+taskRouter.post('/sync/update', auth, async (req: AuthRequest, res) =>
 {
     try
     {
@@ -85,25 +87,67 @@ taskRouter.post('/sync', auth, async (req: AuthRequest, res) =>
             return;
         }
     
-        const unsyncedTasks = req.body;
-        const unsyncedTasksList: NewTask[] = [];
+        const updatedTasks = req.body;
+        const updatedTasksList: NewTask[] = [];
     
-        for (let unsyncedTask of unsyncedTasks)
+        for (let updatedTask of updatedTasks)
         {
-            const {id, ...rest} = unsyncedTask;
+            const {id, pendingUpdate, pendingDelete, ...rest} = updatedTask;
 
-            unsyncedTask = {
+            console.log(updatedTask);
+
+            updatedTask = {
                 ...rest, 
                 uid: req.user,
-                dueAt: new Date(unsyncedTask.dueAt), 
-                createdAt: new Date(unsyncedTask.createdAt),
-                updatedAt: new Date(unsyncedTask.updatedAt),
+                dueAt: new Date(updatedTask.dueAt), 
+                createdAt: new Date(updatedTask.createdAt),
+                updatedAt: new Date(updatedTask.updatedAt),
             }
-            unsyncedTasksList.push(unsyncedTask);
+
+            const [syncedUpdatedTask] = await db.insert(tasks).values(updatedTask).onConflictDoUpdate({
+                target: tasks.id,
+                set: {
+                    title: updatedTask.title,
+                    description: updatedTask.description,
+                    hexColour: updatedTask.hexColour,
+                    dueAt: updatedTask.dueAt,
+                    updatedAt: updatedTask.updatedAt,
+                },
+            }).returning()
+
+            updatedTasksList.push(syncedUpdatedTask);
         }
 
-        const syncedTasks = await db.insert(tasks).values(unsyncedTasksList).returning();
-        res.status(201).json(syncedTasks);
+        res.status(201).json(updatedTasksList);
+    }
+    catch (error: any)
+    {
+        res.status(500).json({error: error.message});
+    }
+});
+
+
+taskRouter.delete('/sync/delete', auth, async (req: AuthRequest, res) =>
+{
+    try
+    {
+        if (!req.user)
+        {
+            res.status(401).json({error: "User not found"});
+            return;
+        }
+    
+        const deletedTasks = req.body;
+        const deletedTaskIds = [];
+    
+        for (let deletedTask of deletedTasks)
+        {
+            await db.delete(tasks).where(eq(tasks.id, deletedTask.id));
+    
+            deletedTaskIds.push(deletedTask.id);
+        }
+    
+        res.status(201).json(deletedTaskIds);
     }
     catch (error: any)
     {

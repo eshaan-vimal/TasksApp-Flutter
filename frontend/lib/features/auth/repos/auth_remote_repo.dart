@@ -1,3 +1,4 @@
+import 'package:frontend/core/services/connectivity_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -21,6 +22,11 @@ class AuthRemoteRepo
   {
     try
     {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Internet connection needed";
+      }
+
       final res = await http.post(
         Uri.parse('${Constants.backendUri}/auth/signup'),
         headers: {
@@ -54,6 +60,11 @@ class AuthRemoteRepo
   {
     try
     {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Internet connection needed";
+      }
+
       final res = await http.post(
         Uri.parse('${Constants.backendUri}/auth/login'),
         headers: {
@@ -83,8 +94,12 @@ class AuthRemoteRepo
   {
     try
     {
-      final token = await storageService.getToken();
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Device offline";
+      }
 
+      final token = await storageService.getToken();
       if (token == null)
       {
         throw "No token found";

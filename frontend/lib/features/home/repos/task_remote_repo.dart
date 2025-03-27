@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:frontend/core/services/connectivity_service.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:frontend/core/constants/constants.dart';
@@ -18,6 +19,11 @@ class TaskRemoteRepo
   {
     try
     {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Device offline";
+      }
+
       final res = await http.post(
         Uri.parse('${Constants.backendUri}/task'),
         headers: {
@@ -54,6 +60,11 @@ class TaskRemoteRepo
   {
     try
     {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Device offline";
+      }
+
       final res = await http.get(
         Uri.parse('${Constants.backendUri}/task'),
         headers: {
@@ -91,6 +102,11 @@ class TaskRemoteRepo
   {
     try
     {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Device offline";
+      }
+
       final res = await http.delete(
         Uri.parse('${Constants.backendUri}/task'),
         headers: {
@@ -114,26 +130,26 @@ class TaskRemoteRepo
   }
 
 
-  Future<List<TaskModel>?> syncTasks ({
+  Future<List<TaskModel>?> syncUpdatedTasks ({
     required String token,
-    required List<TaskModel> unsyncedTasks,
+    required List<TaskModel> updatedTasks,
   }) async
   {
     try
     {
-      final unsyncedTasksMaps = [];
-      for (final task in unsyncedTasks)
+      final updatedTasksMaps = [];
+      for (final task in updatedTasks)
       {
-        unsyncedTasksMaps.add(task.toMap());
+        updatedTasksMaps.add(task.toMap());
       }
 
       final res = await http.post(
-        Uri.parse('${Constants.backendUri}/task/sync'),
+        Uri.parse('${Constants.backendUri}/task/sync/update'),
         headers: {
           'Content-Type': 'application/json',
           'x-auth-token': token,
         },
-        body: jsonEncode(unsyncedTasksMaps),
+        body: jsonEncode(updatedTasksMaps),
       );
 
       if (res.statusCode != 201)
@@ -145,6 +161,44 @@ class TaskRemoteRepo
       final syncedTasks = returnedTasks.map((syncedTask) => TaskModel.fromMap(syncedTask)).toList();
 
       return syncedTasks;
+    }
+    catch (error)
+    {
+      return null;
+    }
+  }
+
+
+  Future<List<String>?> syncDeletedTasks ({
+    required String token,
+    required List<TaskModel> deletedTasks,
+  }) async
+  {
+    try
+    {
+      final deletedTasksMaps = [];
+      for (final task in deletedTasks)
+      {
+        deletedTasksMaps.add(task.toMap());
+      }
+
+      final res = await http.delete(
+        Uri.parse('${Constants.backendUri}/task/sync/delete'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: jsonEncode(deletedTasksMaps),
+      );
+
+      if (res.statusCode != 201)
+      {
+        return null;
+      }
+      
+      final List<String> syncedTaskIds = jsonDecode(res.body).cast<String>();
+
+      return syncedTaskIds;
     }
     catch (error)
     {

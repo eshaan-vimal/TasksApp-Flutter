@@ -38,7 +38,8 @@ class TaskLocalRepo
               dueAt TEXT NOT NULL,
               createdAt TEXT NOT NULL,
               updatedAt TEXT NOT NULL,
-              isSynced INTEGER NOT NULL
+              pendingUpdate INTEGER NOT NULL,
+              pendingDelete INTEGER NOT NULL
             )
           '''
         );
@@ -80,8 +81,12 @@ class TaskLocalRepo
   Future<List<TaskModel>> getTasks () async
   {
     final db = await database;
-
-    final tasks = await db.query(tableName);
+    
+    final tasks = await db.query(
+      tableName,
+      where: 'pendingDelete = ?',
+      whereArgs: [0],
+    );
     List<TaskModel> tasksList = [];
 
     if (tasks.isNotEmpty)
@@ -93,6 +98,19 @@ class TaskLocalRepo
     }
 
     return tasksList;
+  }
+
+
+  Future<void> markDeleteTask (String taskId) async
+  {
+    final db = await database;
+
+    await db.update(
+      tableName, 
+      {'pendingDelete': 1},
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
   }
 
 
@@ -108,24 +126,66 @@ class TaskLocalRepo
   }
 
 
-  Future<List<TaskModel>> getUnsyncedTasks () async
+  Future<List<TaskModel>> getRedundantTasks () async
   {
     final db = await database;
 
-    final unsyncedTasks = await db.query(
+    final redundantTasks = await db.query(
       tableName,
-      where: 'isSynced = ?',
-      whereArgs: [0],
+      where: 'pendingUpdate = ? AND pendingDelete = ?',
+      whereArgs: [1, 1],
     );
 
-    List<TaskModel> unsyncedTasksList = [];
+    List<TaskModel> redundantTasksList = [];
 
-    for (final unsyncedTask in unsyncedTasks)
+    for (final redundantTask in redundantTasks)
     {
-      unsyncedTasksList.add(TaskModel.fromMap(unsyncedTask));
+      redundantTasksList.add(TaskModel.fromMap(redundantTask));
     }
 
-    return unsyncedTasksList;
+    return redundantTasksList;
+  }
+
+
+  Future<List<TaskModel>> getUnsyncedUpdatedTasks () async
+  {
+    final db = await database;
+
+    final updatedTasks = await db.query(
+      tableName,
+      where: 'pendingUpdate = ?',
+      whereArgs: [1],
+    );
+
+    List<TaskModel> updatedTasksList = [];
+
+    for (final updatedTask in updatedTasks)
+    {
+      updatedTasksList.add(TaskModel.fromMap(updatedTask));
+    }
+
+    return updatedTasksList;
+  }
+
+
+  Future<List<TaskModel>> getUnsyncedDeletedTasks () async
+  {
+    final db = await database;
+
+    final deletedTasks = await db.query(
+      tableName,
+      where: 'pendingDelete = ?',
+      whereArgs: [1],
+    );
+
+    List<TaskModel> deletedTasksList = [];
+
+    for (final deletedTask in deletedTasks)
+    {
+      deletedTasksList.add(TaskModel.fromMap(deletedTask));
+    }
+
+    return deletedTasksList;
   }
 
 

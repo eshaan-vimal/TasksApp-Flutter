@@ -58,7 +58,7 @@ class TaskCubit extends Cubit<TaskState>
           dueAt: dueAt,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          isSynced: 0,
+          pendingUpdate: 1,
         );
         await taskLocalRepo.insertTask(newTask);
 
@@ -126,12 +126,23 @@ class TaskCubit extends Cubit<TaskState>
     }
     catch (error)
     {
-      emit(TaskError(error.toString()));
+      try
+      {
+        await taskLocalRepo.markDeleteTask(taskId);
+
+        emit(TaskDelete());
+      }
+      catch (error)
+      {
+        emit(TaskError(error.toString()));
+      }
     }
   }
 
 
-  Future<void> syncTasks (String token) async
+  Future<void> syncTasks ({
+    required token
+  }) async
   {
     try
     {
@@ -139,36 +150,17 @@ class TaskCubit extends Cubit<TaskState>
       {
         return;
       }
-
       _isSyncing = true;
 
-      final unsyncedTasks = await taskLocalRepo.getUnsyncedTasks();
-      if (unsyncedTasks.isEmpty)
+      final redundantTasks = await taskLocalRepo.getRedundantTasks();
+
+      for (final redundantTask in redundantTasks)
       {
-        return;
+        await taskLocalRepo.deleteTask(redundantTask.id);
       }
 
-      final List<TaskModel>? syncedTasks = await taskRemoteRepo.syncTasks(
-        token: token, 
-        unsyncedTasks: unsyncedTasks
-      );
-
-      if (syncedTasks == null || syncedTasks.length != unsyncedTasks.length)
-      {
-        print("Sync failed");
-        return;
-      }
-
-      for (int i = 0; i < syncedTasks.length; i++)
-      {
-        final localTask = unsyncedTasks[i];
-        final remoteTask = syncedTasks[i];
-
-        await taskLocalRepo.updateTaskId(
-          oldId: localTask.id, 
-          syncedTask: remoteTask,
-        );
-      }
+      await syncDeletedTasks(token);
+      await syncUpdatedTasks(token);
 
       print("Sync successful");
     }
@@ -179,6 +171,83 @@ class TaskCubit extends Cubit<TaskState>
     finally
     {
       _isSyncing = false;
+    }
+  }
+
+
+  Future<void> syncUpdatedTasks (String token) async
+  {
+    try
+    {
+      final updatedTasks = await taskLocalRepo.getUnsyncedUpdatedTasks();
+      if (updatedTasks.isEmpty)
+      {
+        return;
+      }
+
+      final List<TaskModel>? syncedTasks = await taskRemoteRepo.syncUpdatedTasks(
+        token: token, 
+        updatedTasks: updatedTasks
+      );
+
+      if (syncedTasks == null || syncedTasks.length != updatedTasks.length)
+      {
+        emit(TaskError("Sync for updated tasks failed"));
+        return;
+      }
+
+      for (int i = 0; i < syncedTasks.length; i++)
+      {
+        final localTask = updatedTasks[i];
+        final remoteTask = syncedTasks[i];
+
+        await taskLocalRepo.updateTaskId(
+          oldId: localTask.id, 
+          syncedTask: remoteTask,
+        );
+      }
+
+      print("Sync update successful");
+    }
+    catch (error)
+    {
+      emit(TaskError(error.toString()));
+    }
+  }
+
+
+  Future<void> syncDeletedTasks (String token) async
+  {
+    try
+    {
+      final deletedTasks = await taskLocalRepo.getUnsyncedDeletedTasks();
+
+      if (deletedTasks.isEmpty)
+      {
+        return;
+      }
+
+      final List<String>? syncedTaskIds = await taskRemoteRepo.syncDeletedTasks(
+        token: token, 
+        deletedTasks: deletedTasks,
+      );
+
+      if (syncedTaskIds == null || syncedTaskIds.length != deletedTasks.length)
+      {
+        emit(TaskError("Sync for deleted tasks failed"));
+        return;
+      }
+
+      for (String taskId in syncedTaskIds)
+      {
+        await taskLocalRepo.deleteTask(taskId);
+      }
+
+      print("Sync delete successful");
+    }
+    catch (error)
+    {
+      emit(TaskError(error.toString()));
     }
   }
 }

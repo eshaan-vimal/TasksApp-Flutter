@@ -6,6 +6,11 @@ class StorageService
   static const String _jwtKey = 'x-auth-token';
   final _storage = const FlutterSecureStorage();
 
+  static final StorageService _instance = StorageService._internal();
+  StorageService._internal();
+
+  factory StorageService () => _instance;
+
 
   Future<void> setToken (String token) async
   {

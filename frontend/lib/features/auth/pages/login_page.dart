@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage>
             );
           }
 
-          if (state is AuthError)
+          else if (state is AuthError)
           {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage>
 
         builder: (context, state) {
 
-          if (state is AuthLoading)
+          if (state is AuthLoading || state is AuthLoggedIn)
           {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
@@ -226,6 +226,7 @@ class _LoginPageState extends State<LoginPage>
               ),
             ),
           );
+
         }
       ),
     );

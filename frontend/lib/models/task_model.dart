@@ -14,7 +14,8 @@ class TaskModel
   final DateTime dueAt;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int? isSynced;
+  final int? pendingUpdate;
+  final int? pendingDelete;
 
   TaskModel ({
     required this.id,
@@ -25,7 +26,8 @@ class TaskModel
     required this.dueAt,
     required this.createdAt,
     required this.updatedAt,
-    this.isSynced,
+    this.pendingUpdate,
+    this.pendingDelete,
   });
 
 
@@ -40,7 +42,8 @@ class TaskModel
       dueAt: DateTime.parse(map['dueAt']),
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
-      isSynced: map['isSynced'] ?? 1,
+      pendingUpdate: map['pendingUpdate'] ?? 0,
+      pendingDelete: map['pendingDelete'] ?? 0,
     );
   }
 
@@ -59,7 +62,8 @@ class TaskModel
       'dueAt': dueAt.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'isSynced': isSynced ?? 1, 
+      'pendingUpdate': pendingUpdate ?? 0,
+      'pendingDelete': pendingDelete ?? 0, 
     };
   }
 
@@ -76,7 +80,8 @@ class TaskModel
     DateTime? dueAt,
     DateTime? createdAt,
     DateTime? updatedAt,
-    int? isSynced,
+    int? pendingUpdate,
+    int? pendingDelete,
   })
   {
     return TaskModel(
@@ -88,7 +93,8 @@ class TaskModel
       dueAt: dueAt ?? this.dueAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      isSynced: isSynced ?? this.isSynced ?? 1,
+      pendingUpdate: pendingUpdate ?? this.pendingUpdate ?? 0,
+      pendingDelete: pendingDelete ?? this.pendingDelete ?? 0,
     );
   }
 
@@ -96,7 +102,7 @@ class TaskModel
   @override
   String toString ()
   {
-    return "UserModel(id: $id, title: $title, description: $description, colour: ${rgbToHex(colour)}, uid: $uid, dueAt: $dueAt, createdAt: $createdAt, updatedAt: $updatedAt), isSynced: ${isSynced ?? 1}";
+    return "UserModel(id: $id, title: $title, description: $description, colour: ${rgbToHex(colour)}, uid: $uid, dueAt: $dueAt, createdAt: $createdAt, updatedAt: $updatedAt), pendingUpdate: ${pendingUpdate ?? 0}, pendingDelete: ${pendingDelete ?? 0}";
   }
 
 
@@ -117,7 +123,8 @@ class TaskModel
       other.dueAt == dueAt &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
-      other.isSynced == isSynced
+      other.pendingUpdate == pendingUpdate &&
+      other.pendingDelete == pendingDelete
     );
   }
 
@@ -133,7 +140,8 @@ class TaskModel
       dueAt.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
-      isSynced.hashCode
+      pendingUpdate.hashCode ^
+      pendingDelete.hashCode
     );
   }
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/services/connectivity_service.dart';
 
 import 'package:frontend/features/auth/cubits/auth_cubit.dart';
 import 'package:frontend/features/home/cubits/task_cubit.dart';
 import 'package:frontend/features/auth/pages/login_page.dart';
-import 'package:frontend/features/home/pages/home_page.dart';
 
 
 void main ()
@@ -35,6 +35,7 @@ class _MyAppState extends State<MyApp>
   void initState ()
   {
     super.initState();
+    ConnectivityService().init();
     context.read<AuthCubit>().getUser();
   }
 
@@ -94,20 +95,7 @@ class _MyAppState extends State<MyApp>
         ),
 
       ),
-      home: BlocBuilder<AuthCubit,AuthState>(
-
-        builder: (context, state) {
-          if (state is AuthLoggedIn)
-          {
-            return const HomePage();
-          }
-          else
-          {
-            return const LoginPage();
-          }
-        }
-
-      ),
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
