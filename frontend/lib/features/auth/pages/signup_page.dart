@@ -92,7 +92,7 @@ class _SignupPageState extends State<SignupPage>
   }
 
   
-  void signupUser ()
+  void handleSignup ()
   {
     if (formKey.currentState!.validate())
     {
@@ -132,6 +132,8 @@ class _SignupPageState extends State<SignupPage>
                 ),
               )
             );
+
+            Navigator.of(context).pushReplacement(LoginPage.route());
           }
 
           else if (state is AuthError)
@@ -215,7 +217,7 @@ class _SignupPageState extends State<SignupPage>
               
                   ElevatedButton(
                     onPressed: () {
-                      signupUser();
+                      handleSignup();
                     },
                     child: const Text(
                       "SIGN UP",

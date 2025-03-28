@@ -19,6 +19,31 @@ class TaskCubit extends Cubit<TaskState>
 
   TaskCubit () : super (TaskInitial());
 
+
+  void smartCompose ({
+    required String token,
+    required String title,
+    required String description,
+  }) async
+  {
+    try
+    {
+      emit(TaskComposing());
+
+      String composedDescription = await taskRemoteRepo.smartCompose(
+        token: token, 
+        title: title, 
+        description: description
+      );
+
+      emit(TaskComposeSuccess(composedDescription));
+    }
+    catch (error)
+    {
+      emit(TaskError(error.toString()));
+    }
+  }
+
   
   void newTask ({
     required String token,

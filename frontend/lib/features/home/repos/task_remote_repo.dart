@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:frontend/core/services/connectivity_service.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,44 @@ import 'package:frontend/models/task_model.dart';
 
 class TaskRemoteRepo 
 {
+  Future<String> smartCompose ({
+    required String token,
+    required String title,
+    required String description,
+  }) async
+  {
+    try
+    {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Smart compose needs internet connectivity";
+      }
+
+      final res = await http.post(
+        Uri.parse('${Constants.backendUri}/task/compose'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: jsonEncode({
+          'title': title,
+          'description': description,
+        }),
+      ).timeout(Duration(seconds: 3));
+
+      if (res.statusCode != 200)
+      {
+        throw jsonDecode(res.body)['error'];
+      }
+
+      return jsonDecode(res.body)['description'];
+    }
+    catch (error)
+    {
+      rethrow;
+    }
+  }
+
 
   Future<TaskModel> newTask ({
     required String token,
@@ -43,9 +82,7 @@ class TaskRemoteRepo
         throw jsonDecode(res.body)['error'];
       }
 
-      final newTask = TaskModel.fromJson(res.body);
-
-      return newTask;
+      return TaskModel.fromJson(res.body);
     }
     catch (error)
     {

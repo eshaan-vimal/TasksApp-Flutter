@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { eq } from 'drizzle-orm';
+import { GoogleGenAI } from '@google/genai';
 
 import { auth, AuthRequest } from '../middleware/auth';
 import { NewTask, tasks } from '../models/task';
@@ -7,6 +8,43 @@ import { db } from '../utils/db';
 
 
 const taskRouter = Router();
+const ai = new GoogleGenAI({apiKey: process.env.GENAI_KEY});
+
+
+taskRouter.post('/compose', auth, async (req: AuthRequest, res) =>
+{
+    try
+    {
+        if (!req.user)
+        {
+            res.status(401).json({error: "User not found"});
+        }
+
+        const { title, description } = req.body;
+
+        const prompt = description ? 
+            `I am curating a list of tasks that i need to perform. I need you to rephrase the following task description for the task "${title}". Respond only with the rephrased description in text format and nothing else."` :
+            `I am curating a list of tasks that i need to perform. I need you to write a clear, concise description in upto 2 lines max for this task: "${title}". Respond only with the rephrased description in text format and nothing else.`;
+
+        const aiResponse = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
+            contents: [{
+                "parts":[{"text": prompt}]
+            }],
+        });
+
+        if (!aiResponse.text)
+        {
+            res.status(500).json({error: "AI is busy"});
+        }
+
+        res.status(200).json({description: aiResponse.text});
+    }
+    catch (error: any)
+    {
+        res.status(500).json({error: error.message});
+    }
+});
 
 
 taskRouter.post('/', auth, async (req: AuthRequest, res) => 
@@ -15,11 +53,9 @@ taskRouter.post('/', auth, async (req: AuthRequest, res) =>
     {
         if (!req.user)
         {
-            res.status(401).json({error: "user not found"});
+            res.status(401).json({error: "User not found"});
             return;
         }
-
-        console.log(req.body);
 
         req.body = {...req.body, dueAt: new Date(req.body.dueAt), uid: req.user};
         const newTask: NewTask = req.body;
@@ -40,7 +76,7 @@ taskRouter.get('/', auth, async (req: AuthRequest, res) =>
     {
         if (!req.user)
         {
-            res.status(401).json({error: "user not found"});
+            res.status(401).json({error: "User not found"});
             return;
         }
 
@@ -61,7 +97,7 @@ taskRouter.delete('/', auth, async (req: AuthRequest, res) =>
     {
         if (!req.user)
         {
-            res.status(401).json({error: "user not found"});
+            res.status(401).json({error: "User not found"});
             return;
         }
     

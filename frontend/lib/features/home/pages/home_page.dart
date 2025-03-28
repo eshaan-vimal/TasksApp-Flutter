@@ -32,15 +32,34 @@ class _HomePageState extends State<HomePage>
   bool hasSynced = false;
 
 
-  void logOut ()
+  void handleLogout ()
   {
     context.read<AuthCubit>().logout();
 
-    Navigator.pushAndRemoveUntil(context, LoginPage.route(), (_) => false);
+    Navigator.of(context).pushAndRemoveUntil(LoginPage.route(), (_) => false);
   }
 
 
-  void deleteTask (String id) async
+  void handleGetTasks ()
+  {
+    final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
+    final taskCubit = context.read<TaskCubit>();
+
+    ConnectivityService().isOnline.then((isOnline) async {
+      if (isOnline)
+      {
+        await taskCubit.syncTasks(token: authCreds.user.token!);
+        taskCubit.getTasks(token: authCreds.user.token!);
+      } 
+      else 
+      {
+        taskCubit.getTasks(token: authCreds.user.token!);
+      }
+    });
+  }
+
+
+  void handleDeleteTask (String id) async
   {
     final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
     final taskCubit = context.read<TaskCubit>();
@@ -59,27 +78,14 @@ class _HomePageState extends State<HomePage>
   {
     super.initState();
 
-    final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
-    final taskCubit = context.read<TaskCubit>();
-
-    ConnectivityService().isOnline.then((isOnline) async {
-      if (isOnline)
-      {
-        await taskCubit.syncTasks(token: authCreds.user.token!);
-        taskCubit.getTasks(token: authCreds.user.token!);
-      } 
-      else 
-      {
-        taskCubit.getTasks(token: authCreds.user.token!);
-      }
-    });
+    handleGetTasks();
   }
 
   @override
   Widget build (BuildContext context) 
   {
     return Scaffold(
-
+    
       appBar: AppBar(
         title: const Text(
           'My Tasks',
@@ -89,27 +95,27 @@ class _HomePageState extends State<HomePage>
           ),
         ),
         actions: [
-
+    
           IconButton(
             onPressed: () {
-              Navigator.push(context, NewTaskPage.route());
+              Navigator.of(context).push(NewTaskPage.route());
             }, 
             icon: const Icon(Icons.add),
           ),
-
+    
           IconButton(
-            onPressed: logOut,
+            onPressed: handleLogout,
             icon: const Icon(Icons.logout_rounded),
           ),
-
+    
         ],
       ),
-
+    
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: BlocConsumer<TaskCubit,TaskState>(
           listener: (context, state) {
-
+    
             if (state is TaskDelete)
             {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +126,7 @@ class _HomePageState extends State<HomePage>
                 )
               );
             }
-
+    
             else if (state is TaskError)
             {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -131,18 +137,11 @@ class _HomePageState extends State<HomePage>
                 )
               );
             }
-
+    
           },
-
+    
           builder: (context, state) {
-
-            if (state is TaskLoading)
-            {
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
-              );
-            }
-
+    
             if (state is GetTasksSuccess)
             {
               final tasks = state.tasksList.where((task) => (
@@ -150,12 +149,12 @@ class _HomePageState extends State<HomePage>
                 task.dueAt.month == selectedDate.month &&
                 task.dueAt.year == selectedDate.year
               )).toList()..sort((a, b) => a.dueAt.compareTo(b.dueAt));
-
+    
               if (tasks.isEmpty)
               {
                 return Column(
                   children: [
-
+    
                     DateSelector(
                       selectedDate: selectedDate,
                       onTap: (date) {
@@ -164,7 +163,7 @@ class _HomePageState extends State<HomePage>
                         });
                       },
                     ),
-
+    
                     const Expanded(
                       child: Center(
                         child: Text(
@@ -176,11 +175,11 @@ class _HomePageState extends State<HomePage>
                         ),
                       ),
                     ),
-
+    
                   ],
                 );
               }
-
+    
               return Column(
                 children: [
               
@@ -210,7 +209,7 @@ class _HomePageState extends State<HomePage>
                               extentRatio: 0.25,
                               children: [
                                 SlidableAction(
-                                  onPressed: (_) => deleteTask(task.id),
+                                  onPressed: (_) => handleDeleteTask(task.id),
                                   flex: 1,
                                   backgroundColor: const Color.fromRGBO(255, 82, 82, 1),
                                   foregroundColor: const Color.fromRGBO(255, 255, 255, 1),
@@ -264,11 +263,15 @@ class _HomePageState extends State<HomePage>
             }
 
             return const Center(
-              child: Text(
-                "Spooky",
-              ),
+              child: CircularProgressIndicator.adaptive(),
             );
-
+    
+            // return const Center(
+            //   child: Text(
+            //     "Spooky",
+            //   ),
+            // );
+    
           }
         ),
       ),

@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
 
-  void loginUser ()
+  void handleLogin ()
   {
     if (formKey.currentState!.validate())
     {
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage>
 
           if (state is AuthLoggedIn)
           {
-            Navigator.pushReplacement(context, HomePage.route());
+            Navigator.of(context).pushReplacement(HomePage.route());
 
             // ScaffoldMessenger.of(context).showSnackBar(
             //   const SnackBar(
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage>
                   const SizedBox(height: 30,),
               
                   ElevatedButton(
-                    onPressed: loginUser,
+                    onPressed: handleLogin,
                     child: const Text(
                       "LOG IN",
                       style: TextStyle(
