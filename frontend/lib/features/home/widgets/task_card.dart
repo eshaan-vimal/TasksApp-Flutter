@@ -32,6 +32,7 @@ class TaskCard extends StatelessWidget
             Text(
               title,
               style: const TextStyle(
+                color: Color.fromRGBO(0, 0, 0, 1),
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.3,
@@ -41,6 +42,7 @@ class TaskCard extends StatelessWidget
             Text(
               description,
               style: const TextStyle(
+                color: Color.fromRGBO(0, 0, 0, 1),
                 fontSize: 15,
               ),
               maxLines: 4,

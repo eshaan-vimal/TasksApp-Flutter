@@ -23,8 +23,10 @@ class _LoginPageState extends State<LoginPage>
 {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  bool isObscured = true;
 
   String? validateEmail (String? value)
   {
@@ -127,9 +129,9 @@ class _LoginPageState extends State<LoginPage>
           else if (state is AuthError)
           {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Center(
-                  child: Text("Login failed"),
+                  child: Text(state.error),
                 ),
               )
             );
@@ -170,16 +172,26 @@ class _LoginPageState extends State<LoginPage>
                     controller: emailController,
                     decoration: const InputDecoration(
                       hintText: "Enter email",
+                      prefixIcon: Icon(Icons.email_rounded),
                     ),
                     validator: validateEmail,
                   ),
                   const SizedBox(height: 15,),
               
                   TextFormField(
-                    obscureText: true,
+                    obscureText: isObscured,
                     controller: passwordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Enter password",
+                      prefixIcon: const Icon(Icons.key_rounded),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isObscured = !isObscured;
+                          });
+                        }, 
+                        icon: isObscured ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
+                      ),
                     ),
                     validator: validatePassword,
                   ),
@@ -190,8 +202,9 @@ class _LoginPageState extends State<LoginPage>
                     child: const Text(
                       "LOG IN",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color.fromRGBO(0, 0, 0, 0.867),
                         fontSize: 14,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: 2,
                       ),
                     ),
@@ -206,13 +219,13 @@ class _LoginPageState extends State<LoginPage>
                       text: const TextSpan(
                         text: "Don't have an account? ",
                         style: TextStyle(
-                          color: Colors.black,
                           fontSize: 15,
                         ),
                         children: [
                           TextSpan(
                             text: "Sign Up",
                             style: TextStyle(
+                              color: Color.fromARGB(255, 255, 0, 127),
                               // fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),

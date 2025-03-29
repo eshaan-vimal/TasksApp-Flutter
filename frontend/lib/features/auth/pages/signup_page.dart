@@ -23,7 +23,10 @@ class _SignupPageState extends State<SignupPage>
   final TextEditingController emailController = TextEditingController();
   final TextEditingController password1Controller = TextEditingController();
   final TextEditingController password2Controller = TextEditingController();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool isObscured = true;
 
 
   String? validateName (String? value)
@@ -181,6 +184,7 @@ class _SignupPageState extends State<SignupPage>
                     controller: nameController,
                     decoration: const InputDecoration(
                       hintText: "Enter name",
+                      prefixIcon: Icon(Icons.person),
                     ),
                     validator: validateName,
                   ),
@@ -191,25 +195,44 @@ class _SignupPageState extends State<SignupPage>
                     controller: emailController,
                     decoration: const InputDecoration(
                       hintText: "Enter email",
+                      prefixIcon: Icon(Icons.email),
                     ),
                     validator: validateEmail,
                   ),
                   const SizedBox(height: 15,),
               
                   TextFormField(
-                    obscureText: true,
+                    obscureText: isObscured,
                     controller: password1Controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Enter password",
+                      prefixIcon: const Icon(Icons.key_rounded),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isObscured = !isObscured;
+                          });
+                        }, 
+                        icon: isObscured ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15,),
           
                   TextFormField(
-                    obscureText: true,
+                    obscureText: isObscured,
                     controller: password2Controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Confirm password",
+                      prefixIcon: const Icon(Icons.lock_rounded),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isObscured = !isObscured;
+                          });
+                        }, 
+                        icon: isObscured ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
+                      ),
                     ),
                     validator: validatePassword,
                   ),
@@ -222,8 +245,9 @@ class _SignupPageState extends State<SignupPage>
                     child: const Text(
                       "SIGN UP",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color.fromARGB(221, 0, 0, 0),
                         fontSize: 14,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: 2,
                       ),
                     ),
@@ -238,13 +262,13 @@ class _SignupPageState extends State<SignupPage>
                       text: const TextSpan(
                         text: "Already have an account? ",
                         style: TextStyle(
-                          color: Colors.black,
                           fontSize: 15,
                         ),
                         children: [
                           TextSpan(
                             text: "Log In",
                             style: TextStyle(
+                              color: Color.fromARGB(255, 255, 0, 127),
                               // fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),

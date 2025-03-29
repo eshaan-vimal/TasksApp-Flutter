@@ -56,42 +56,162 @@ class _MyAppState extends State<MyApp>
 
         fontFamily: "Lato",
 
-        inputDecorationTheme: InputDecorationTheme(
+        brightness: Brightness.dark,
+
+        // primaryIconTheme: const IconThemeData(
+        //   color: Color(0xFF00FF9C),
+        // ),
+
+        iconTheme: const IconThemeData(
+          color: Color(0xFF00FF9C),
+        ),
+
+        iconButtonTheme: const IconButtonThemeData(
+          style: ButtonStyle(
+            iconColor: WidgetStatePropertyAll(Color(0xFF00FF9C)),
+          )
+        ),
+
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: const Color.fromARGB(255, 255, 0, 127),
+        ),
+
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: Color.fromARGB(255, 255, 0, 127),
+          contentTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          behavior: SnackBarBehavior.floating, 
+          elevation: 6.0,  
+        ),
+
+        inputDecorationTheme: const InputDecorationTheme(
+
+          floatingLabelStyle: TextStyle(
+            color: Color(0xFF00FF9C),
+          ),
 
           border: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey.shade300,
-              width: 2.5,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              width: 1.2,
             ),
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
           ),
 
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey.shade300,
-              width: 2.5,
+              color: Color.fromRGBO(224, 224, 224, 1),
+              width: 1.2,
             ),
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
           ),
 
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              // color: Colors.grey.shade300,
-              width: 3,
+              color: Color(0xFF00FF9C),
+              width: 2,
             ),
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
           ),
 
         ),
 
-        elevatedButtonTheme: ElevatedButtonThemeData(
+        elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.black87),
-            minimumSize: WidgetStateProperty.all(Size(double.infinity, 60)),
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            backgroundColor: WidgetStatePropertyAll(Color(0xFF00FF9C),),
+            minimumSize: WidgetStatePropertyAll(Size(double.infinity, 60)),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             )),
           ),
+        ),
+
+        datePickerTheme: DatePickerThemeData(
+
+          dividerColor: const Color.fromRGBO(255, 255, 255, 0.702),
+
+          confirmButtonStyle: ButtonStyle(
+            foregroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 255, 0, 127)),
+          ),
+          cancelButtonStyle: ButtonStyle(
+            foregroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 255, 0, 127)),
+          ),
+
+          inputDecorationTheme: InputDecorationTheme(
+            helperStyle: TextStyle(
+              color: const Color.fromRGBO(255, 255, 255, 1),
+            ),
+            hintStyle: TextStyle(
+              color: const Color.fromRGBO(255, 255, 255, 1),
+            ),
+          ),
+          
+          todayBackgroundColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) 
+            {
+              return const Color.fromARGB(255, 255, 0, 127);
+            }
+            return const Color.fromRGBO(0, 0, 0, 0);
+          }),
+          todayForegroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 255, 255, 255)),
+
+          dayBackgroundColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) 
+            {
+              return const Color.fromARGB(255, 255, 0, 127);
+            }
+            return const Color.fromRGBO(0, 0, 0, 0);
+          }),
+          dayForegroundColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return const Color.fromARGB(255, 121, 121, 121); // ✅ Keep disabled dates greyed out
+            }
+            if (states.contains(WidgetState.selected)) {
+              return const Color.fromRGBO(0, 0, 0, 1); // Selected date
+            }
+            return const Color.fromARGB(255, 255, 255, 255); // Default date color
+          }),
+
+        ),
+
+        timePickerTheme: TimePickerThemeData(
+
+          confirmButtonStyle: ButtonStyle(
+            foregroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 255, 0, 127)),
+          ),
+          cancelButtonStyle: ButtonStyle(
+            foregroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 255, 0, 127)),
+          ),
+
+          dialHandColor: const Color(0xFF00FF9C),
+          dialTextColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected))
+            {
+              return const Color.fromARGB(255, 0, 0, 0);
+            }
+            return const Color.fromARGB(255, 255, 255, 255);
+          }),
+
+          dayPeriodColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color.fromARGB(190, 255, 0, 128);
+            }
+            return const Color.fromRGBO(0, 0, 0, 0);
+          }),
+
+          hourMinuteColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color.fromARGB(255, 255, 0, 127);
+            }
+            return const Color.fromRGBO(66, 66, 66, 1);
+          }),
+
         ),
 
       ),

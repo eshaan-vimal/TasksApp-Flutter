@@ -211,7 +211,7 @@ class _HomePageState extends State<HomePage>
                                 SlidableAction(
                                   onPressed: (_) => handleDeleteTask(task.id),
                                   flex: 1,
-                                  backgroundColor: const Color.fromRGBO(255, 82, 82, 1),
+                                  backgroundColor: const Color.fromRGBO(244, 67, 54, 1),
                                   foregroundColor: const Color.fromRGBO(255, 255, 255, 1),
                                   borderRadius: const BorderRadius.all(Radius.circular(12.0)),
                                   icon: Icons.delete,
@@ -261,6 +261,8 @@ class _HomePageState extends State<HomePage>
                 ],
               );
             }
+
+            print(state);
 
             return const Center(
               child: CircularProgressIndicator.adaptive(),

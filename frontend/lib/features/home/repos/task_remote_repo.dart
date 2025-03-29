@@ -31,7 +31,7 @@ class TaskRemoteRepo
           'title': title,
           'description': description,
         }),
-      ).timeout(Duration(seconds: 3));
+      ).timeout(Duration(seconds: 10));
 
       if (res.statusCode != 200)
       {
@@ -40,9 +40,13 @@ class TaskRemoteRepo
 
       return jsonDecode(res.body)['description'];
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
-      rethrow;
+      throw "Smart compose failed";
     }
   }
 
@@ -84,9 +88,13 @@ class TaskRemoteRepo
 
       return TaskModel.fromJson(res.body);
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
-      rethrow;
+      throw "Failed to create new task";
     }
   }
 
@@ -125,9 +133,13 @@ class TaskRemoteRepo
 
       return tasksList;
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
-      rethrow;
+      throw "Failed to fetch tasks";
     }
   }
 
@@ -160,9 +172,13 @@ class TaskRemoteRepo
         throw jsonDecode(res.body)['error'];
       }
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
-      rethrow;
+      throw "Failed to delete task";
     }
   }
 

@@ -39,7 +39,7 @@ authRouter.post('/signup', async (req: Request<{}, {}, SignupBody>, res) =>
 
         if (existingUser)
         {
-            res.status(400).json({msg: "email already registered"});
+            res.status(400).json({msg: "Email already registered"});
             return;
         }
 
@@ -56,7 +56,7 @@ authRouter.post('/signup', async (req: Request<{}, {}, SignupBody>, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Signup failed"});
     }
 });
 
@@ -71,7 +71,7 @@ authRouter.post('/login', async (req: Request<{},{},LoginBody>, res) =>
 
         if (!user)
         {
-            res.status(400).json({error: "email not registered"});
+            res.status(400).json({error: "Email not registered"});
             return;
         }
 
@@ -79,7 +79,7 @@ authRouter.post('/login', async (req: Request<{},{},LoginBody>, res) =>
 
         if (!isValid)
         {
-            res.status(401).json({error: "invalid password"});
+            res.status(401).json({error: "Invalid password"});
             return;
         }
 
@@ -89,7 +89,7 @@ authRouter.post('/login', async (req: Request<{},{},LoginBody>, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Login failed"});
     }
 });
 
@@ -100,7 +100,7 @@ authRouter.get('/', auth, async (req: AuthRequest, res) =>
     {
         if (!req.user)
         {
-            res.status(401).json({error: "user not found"});
+            res.status(401).json({error: "User not found"});
             return;
         }
     
@@ -110,7 +110,7 @@ authRouter.get('/', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Authentication failed"});
     }
 });
 

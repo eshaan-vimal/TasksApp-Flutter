@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:frontend/core/services/connectivity_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -46,6 +48,10 @@ class AuthRemoteRepo
 
       return UserModel.fromJson(res.body);
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
       rethrow;
@@ -83,6 +89,10 @@ class AuthRemoteRepo
 
       return UserModel.fromJson(res.body);
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     {
       rethrow;
@@ -102,7 +112,7 @@ class AuthRemoteRepo
       final token = await storageService.getToken();
       if (token == null)
       {
-        throw "No token found";
+        throw "Please login";
       }
 
       final res = await http.get(
@@ -120,9 +130,13 @@ class AuthRemoteRepo
 
       return UserModel.fromJson(res.body);
     }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
     catch (error)
     { 
-      rethrow;
+      throw "Auto login failed";
     }
   }
 }

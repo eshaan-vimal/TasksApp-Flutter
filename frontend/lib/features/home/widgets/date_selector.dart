@@ -45,15 +45,19 @@ class _DateSelectorState extends State<DateSelector>
                   weekOffset--;
                 });
               },
-              icon: const Icon(Icons.arrow_back_ios),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Color.fromRGBO(255, 255, 255, 0.702),
+              ),
             ),
         
             Text(
               month.toUpperCase(),
               style: const TextStyle(
+                color: Color.fromARGB(255, 255, 0, 127),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                letterSpacing: 2,
+                letterSpacing: 2.5,
               ),
             ),
         
@@ -63,7 +67,10 @@ class _DateSelectorState extends State<DateSelector>
                   weekOffset++;
                 });
               }, 
-              icon: const Icon(Icons.arrow_forward_ios),
+              icon: const Icon(
+                Icons.arrow_forward_ios,
+                color: Color.fromRGBO(255, 255, 255, 0.702),
+              ),
             ),
         
           ],
@@ -91,13 +98,15 @@ class _DateSelectorState extends State<DateSelector>
                 child: SizedBox(
                   width: 85,
                   child: Card(
-                    color: isSelected ? const Color.fromRGBO(255, 87, 34, 1) : null,
+                    elevation: 1.5,
+                    color: isSelected ? const Color(0xFF00FF9C) : null,
+                    shadowColor: const Color(0xFF00FF9C),
                     margin: const EdgeInsets.all(5.0),
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1.5,
-                        color: isSelected ? const Color.fromRGBO(255, 87, 34, 1) : const Color.fromRGBO(189, 189, 189, 1),
-                      ),
+                      // side: BorderSide(
+                      //   width: 1,
+                      //   color: const Color(0xFF00FF9C),
+                      // ),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: Padding(
@@ -109,8 +118,8 @@ class _DateSelectorState extends State<DateSelector>
                             date,
                             style: TextStyle(
                               fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: isSelected ? const Color.fromRGBO(255, 255, 255, 1) : null,
+                              fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                              color: isSelected ? const Color.fromRGBO(0, 0, 0, 1) : null,
                             ),
                           ),
                           const Spacer(),
@@ -119,9 +128,9 @@ class _DateSelectorState extends State<DateSelector>
                             day,
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                               letterSpacing: 1.5,
-                              color: isSelected ? const Color.fromRGBO(255, 255, 255, 0.702) : null,
+                              color: isSelected ? const Color.fromRGBO(0, 0, 0, 1) : null,
                             ),
                           ),
                 

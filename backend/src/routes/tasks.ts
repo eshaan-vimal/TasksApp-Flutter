@@ -42,7 +42,7 @@ taskRouter.post('/compose', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Smart compose failed"});
     }
 });
 
@@ -65,7 +65,7 @@ taskRouter.post('/', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Failed to create new task"});
     }
 });
 
@@ -86,7 +86,7 @@ taskRouter.get('/', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Failed to fetch tasks"});
     }
 });
 
@@ -104,11 +104,11 @@ taskRouter.delete('/', auth, async (req: AuthRequest, res) =>
         const {taskId}: {taskId: string} = req.body;
         await db.delete(tasks).where(eq(tasks.id, taskId));
     
-        res.status(200).json("task deleted successfully");
+        res.status(200).json("Task deleted successfully");
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Failed to delete task"});
     }
 });
 
@@ -158,7 +158,7 @@ taskRouter.post('/sync/update', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Failed to sync locally updated tasks"});
     }
 });
 
@@ -187,7 +187,7 @@ taskRouter.delete('/sync/delete', auth, async (req: AuthRequest, res) =>
     }
     catch (error: any)
     {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: "Server Error: Failed to sync locally deleted tasks"});
     }
 });
 

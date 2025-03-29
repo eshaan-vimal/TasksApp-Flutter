@@ -278,11 +278,11 @@ class _NewTaskPageState extends State<NewTaskPage>
                                 decoration: const BoxDecoration(
                                   border: Border.symmetric(
                                     vertical: BorderSide(
-                                      width: 2,
+                                      width: 1.2,
                                       color: Color.fromRGBO(224, 224, 224, 1),
                                     ),
                                     horizontal: BorderSide(
-                                      width: 2,
+                                      width: 1.2,
                                       color: Color.fromRGBO(224, 224, 224, 1),
                                     ),
                                   ),
@@ -330,11 +330,11 @@ class _NewTaskPageState extends State<NewTaskPage>
                                 decoration: const BoxDecoration(
                                   border: Border.symmetric(
                                     vertical: BorderSide(
-                                      width: 2,
+                                      width: 1.2,
                                       color: Color.fromRGBO(224, 224, 224, 1),
                                     ),
                                     horizontal: BorderSide(
-                                      width: 2,
+                                      width: 1.2,
                                       color: Color.fromRGBO(224, 224, 224, 1),
                                     ),
                                   ),
@@ -410,8 +410,10 @@ class _NewTaskPageState extends State<NewTaskPage>
                           child: const Text(
                             'ADD TASK',
                             style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 2,
+                            color: Color.fromRGBO(0, 0, 0, 0.867),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
                             ),
                           ),
                         ),
