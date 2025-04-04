@@ -161,7 +161,15 @@ class _NewTaskPageState extends State<NewTaskPage>
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
-        handleGetTasks();
+
+        BlocListener<TaskCubit,TaskState>(
+          listener: (context, state) {
+            if (state is NewTaskSuccess || state is TaskDelete)
+            {
+              handleGetTasks();
+            }
+          },
+        );
       },
       child: Scaffold(
       
