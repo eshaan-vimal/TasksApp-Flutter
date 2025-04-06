@@ -124,12 +124,24 @@ class _MyAppState extends State<MyApp>
 
         elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Color(0xFF00FF9C),),
+            // backgroundColor: WidgetStatePropertyAll(Color(0xFF00FF9C),),
+            backgroundColor: WidgetStatePropertyAll(Color(0xFF1C1C22)),
+            foregroundColor: WidgetStatePropertyAll(Color(0xFF00FF9C)),
             minimumSize: WidgetStatePropertyAll(Size(double.infinity, 60)),
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+              side: BorderSide(
+                color: Color(0xFF00FF9C),
+                width: 0.7,
+              ),
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             )),
+            // shadowColor: WidgetStatePropertyAll(Color(0xFF00FF9C)),
           ),
+        ),
+
+        tabBarTheme: TabBarThemeData(
+          indicatorColor: const Color.fromARGB(255, 255, 0, 127),
+          labelColor: const Color.fromARGB(255, 255, 0, 127),
         ),
 
         datePickerTheme: DatePickerThemeData(
@@ -170,7 +182,7 @@ class _MyAppState extends State<MyApp>
           }),
           dayForegroundColor: WidgetStateColor.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return const Color.fromARGB(255, 121, 121, 121); // ✅ Keep disabled dates greyed out
+              return const Color.fromARGB(255, 121, 121, 121); 
             }
             if (states.contains(WidgetState.selected)) {
               return const Color.fromRGBO(0, 0, 0, 1); // Selected date

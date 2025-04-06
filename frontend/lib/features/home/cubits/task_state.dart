@@ -27,6 +27,8 @@ class GetTasksSuccess extends TaskState
     const GetTasksSuccess (this.tasksList);
 }
 
+class TaskUpdate extends TaskState {}
+
 class TaskDelete extends TaskState {}
 
 class TaskError extends TaskState 

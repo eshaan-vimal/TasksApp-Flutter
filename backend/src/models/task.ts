@@ -12,6 +12,7 @@ export const tasks = pgTable(
         hexColour: text('hex_colour').notNull(),
         uid: uuid('uuid').notNull().references(() => users.id, {onDelete: 'cascade'}),
         dueAt: timestamp('due_at').$defaultFn(() => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
+        doneAt: timestamp('done_at'),
         createdAt: timestamp('created_at').defaultNow(),
         updatedAt: timestamp('updated_at').defaultNow(),
     },

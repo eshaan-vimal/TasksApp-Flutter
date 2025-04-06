@@ -64,7 +64,7 @@ class TaskCubit extends Cubit<TaskState>
         title: title, 
         description: description, 
         hexColour: rgbToHex(colour), 
-        dueAt: dueAt
+        dueAt: dueAt,
       );
       await taskLocalRepo.insertTask(newTask);
 
@@ -81,6 +81,7 @@ class TaskCubit extends Cubit<TaskState>
           colour: colour,
           uid: uid,
           dueAt: dueAt,
+          doneAt: null,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           pendingUpdate: 1,
@@ -123,6 +124,40 @@ class TaskCubit extends Cubit<TaskState>
         }
 
         emit(GetTasksSuccess(tasksList));
+      }
+      catch (error)
+      {
+        emit(TaskError(error.toString()));
+      }
+    }
+  }
+
+
+  Future<void> updateTask ({
+    required String token,
+    required String taskId,
+    required DateTime doneAt,
+  }) async
+  {
+    try
+    {
+      emit (TaskLoading());
+
+      await taskRemoteRepo.updateTask(
+        token: token, 
+        taskId: taskId, 
+        doneAt: doneAt,
+      );
+
+      emit (TaskUpdate());
+    }
+    catch (error)
+    {
+      try
+      {
+        await taskLocalRepo.updateTask(taskId, doneAt);
+
+        emit(TaskUpdate());
       }
       catch (error)
       {

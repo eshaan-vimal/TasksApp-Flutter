@@ -45,6 +45,7 @@ class TaskLocalRepo
                 hexColour TEXT NOT NULL,
                 uid TEXT NOT NULL,
                 dueAt TEXT NOT NULL,
+                doneAt TEXT,
                 createdAt TEXT NOT NULL,
                 updatedAt TEXT NOT NULL,
                 pendingUpdate INTEGER NOT NULL,
@@ -134,6 +135,51 @@ class TaskLocalRepo
       throw "Failed to fetch tasks from local db";
     }
   }
+  
+
+  Future<void> updateTask (String taskId, DateTime doneAt) async
+  {
+    try 
+    {
+      final db = await database;
+
+      await db.update(
+        tableName,
+        {
+          'doneAt': doneAt.toIso8601String(),
+          'pendingUpdate': 1,
+        },
+        where: 'id = ?', 
+        whereArgs: [taskId],
+      );
+
+      print(db.query(tableName));
+    } 
+    catch (error) 
+    {
+      throw "Failed to mark task as completed";
+    }
+  }
+
+
+  // Future<void> markUpdateTask (String taskId) async
+  // {
+  //   try
+  //   {
+  //     final db = await database;
+
+  //     await db.update(
+  //       tableName, 
+  //       {'pendingUpdate': 1},
+  //       where: 'id = ?',
+  //       whereArgs: [taskId],
+  //     );
+  //   }
+  //   catch (error)
+  //   {
+  //     throw "Failed to delete task (offline)";
+  //   }
+  // }
 
 
   Future<void> markDeleteTask (String taskId) async

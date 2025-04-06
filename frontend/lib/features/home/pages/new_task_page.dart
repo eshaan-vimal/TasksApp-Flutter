@@ -418,7 +418,6 @@ class _NewTaskPageState extends State<NewTaskPage>
                           child: const Text(
                             'ADD TASK',
                             style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 0, 0.867),
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,

@@ -126,7 +126,7 @@ class TaskRemoteRepo
       final allTasks = jsonDecode(res.body);
       List<TaskModel> tasksList = [];
 
-      for (var task in allTasks)
+      for (final task in allTasks)
       {
         tasksList.add(TaskModel.fromMap(task));
       }
@@ -140,6 +140,47 @@ class TaskRemoteRepo
     catch (error)
     {
       throw "Failed to fetch tasks";
+    }
+  }
+
+
+  Future<void> updateTask ({
+    required String token,
+    required String taskId,
+    required DateTime doneAt,
+  }) async
+  {
+    try
+    {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Device offline";
+      }
+
+      final res = await http.put(
+        Uri.parse('${Constants.backendUri}/task'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: jsonEncode({
+          'taskId': taskId,
+          'doneAt': doneAt.toIso8601String(),
+        }),
+      ).timeout(Duration(seconds: 3));
+
+      if (res.statusCode != 200)
+      {
+        throw jsonDecode(res.body)['error'];
+      }
+    }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
+    catch (error)
+    {
+      throw "Failed to create new task";
     }
   }
 

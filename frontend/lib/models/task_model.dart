@@ -12,6 +12,7 @@ class TaskModel
   final Color colour;
   final String uid;
   final DateTime dueAt;
+  final DateTime? doneAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int? pendingUpdate;
@@ -24,6 +25,7 @@ class TaskModel
     required this.colour,
     required this.uid,
     required this.dueAt,
+    required this.doneAt,
     required this.createdAt,
     required this.updatedAt,
     this.pendingUpdate,
@@ -40,6 +42,7 @@ class TaskModel
       colour: hexToRgb(map['hexColour']),
       uid: map['uid'] as String,
       dueAt: DateTime.parse(map['dueAt']),
+      doneAt: map['doneAt'] != null ? DateTime.parse(map['doneAt']) : null,
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       pendingUpdate: map['pendingUpdate'] ?? 0,
@@ -60,6 +63,7 @@ class TaskModel
       'hexColour': rgbToHex(colour),
       'uid': uid,
       'dueAt': dueAt.toIso8601String(),
+      'doneAt': doneAt?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'pendingUpdate': pendingUpdate ?? 0,
@@ -78,6 +82,7 @@ class TaskModel
     Color? colour,
     String? uid,
     DateTime? dueAt,
+    DateTime? doneAt,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? pendingUpdate,
@@ -91,6 +96,7 @@ class TaskModel
       colour: colour ?? this.colour,
       uid: uid ?? this.uid,
       dueAt: dueAt ?? this.dueAt,
+      doneAt: doneAt ?? this.doneAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       pendingUpdate: pendingUpdate ?? this.pendingUpdate ?? 0,
@@ -102,7 +108,7 @@ class TaskModel
   @override
   String toString ()
   {
-    return "UserModel(id: $id, title: $title, description: $description, colour: ${rgbToHex(colour)}, uid: $uid, dueAt: $dueAt, createdAt: $createdAt, updatedAt: $updatedAt), pendingUpdate: ${pendingUpdate ?? 0}, pendingDelete: ${pendingDelete ?? 0}";
+    return "UserModel(id: $id, title: $title, description: $description, colour: ${rgbToHex(colour)}, uid: $uid, dueAt: $dueAt, doneAt: $doneAt, createdAt: $createdAt, updatedAt: $updatedAt), pendingUpdate: ${pendingUpdate ?? 0}, pendingDelete: ${pendingDelete ?? 0}";
   }
 
 
@@ -121,6 +127,7 @@ class TaskModel
       other.colour == colour &&
       other.uid == uid &&
       other.dueAt == dueAt &&
+      other.doneAt == doneAt &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
       other.pendingUpdate == pendingUpdate &&
@@ -138,6 +145,7 @@ class TaskModel
       colour.hashCode ^
       uid.hashCode ^
       dueAt.hashCode ^
+      doneAt.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
       pendingUpdate.hashCode ^

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { GoogleGenAI } from '@google/genai';
 
 import { auth, AuthRequest } from '../middleware/auth';
@@ -57,11 +57,72 @@ taskRouter.post('/', auth, async (req: AuthRequest, res) =>
             return;
         }
 
-        req.body = {...req.body, dueAt: new Date(req.body.dueAt), uid: req.user};
+        req.body = {
+            ...req.body,
+            uid: req.user,
+            dueAt: new Date(req.body.dueAt), 
+            doneAt: req.body.doneAt ? new Date(req.body.doneAt) : null, 
+            updatedAt: req.body.updatedAt ? new Date(req.body.updatedAt) : new Date(),
+        };
         const newTask: NewTask = req.body;
 
-        const [task] = await db.insert(tasks).values(newTask).returning();
+        const [task] = await db.insert(tasks).values(newTask).onConflictDoUpdate({
+            target: tasks.id,
+            set: {
+                title: newTask.title,
+                description: newTask.description,
+                hexColour: newTask.hexColour,
+                dueAt: newTask.dueAt,
+                doneAt: newTask.doneAt,
+                updatedAt: newTask.updatedAt,
+            }
+        })
+        .returning();
+
         res.status(201).json(task);
+    }
+    catch (error: any)
+    {
+        res.status(500).json({error: "Server Error: Failed to create new task"});
+    }
+});
+
+
+taskRouter.put('/', auth, async (req: AuthRequest, res) => 
+{
+    try
+    {
+        if (!req.user)
+        {
+            res.status(401).json({error: "User not found"});
+            return;
+        }
+        
+        const {taskId, ...rest} = req.body;
+
+        if (!taskId) 
+        {
+            res.status(400).json({error: "Task ID is required"});
+            return;
+        }
+
+        req.body = {
+            ...rest,
+            doneAt: new Date(req.body.doneAt), 
+            updatedAt: req.body.updatedAt ? new Date(req.body.updatedAt) : new Date(),
+        };
+        const updatedTask: Partial<NewTask> = req.body;
+
+        const [task] = await db.update(tasks).set(updatedTask).where(and(eq(tasks.id, taskId), eq(tasks.uid, req.user))).returning();
+        console.log(task);
+
+        if (!task) 
+        {
+            res.status(404).json({error: "Task not found or unauthorized"});
+            return;
+        }
+
+        res.status(200).json(task);
     }
     catch (error: any)
     {
@@ -133,9 +194,11 @@ taskRouter.post('/sync/update', auth, async (req: AuthRequest, res) =>
             console.log(updatedTask);
 
             updatedTask = {
-                ...rest, 
+                ...rest,
+                id: updatedTask.doneAt ? id : null, 
                 uid: req.user,
                 dueAt: new Date(updatedTask.dueAt), 
+                doneAt: updatedTask.doneAt ? new Date(updatedTask.doneAt) : null,
                 createdAt: new Date(updatedTask.createdAt),
                 updatedAt: new Date(updatedTask.updatedAt),
             }
@@ -146,6 +209,7 @@ taskRouter.post('/sync/update', auth, async (req: AuthRequest, res) =>
                     title: updatedTask.title,
                     description: updatedTask.description,
                     hexColour: updatedTask.hexColour,
+                    doneAt: updatedTask.doneAt,
                     dueAt: updatedTask.dueAt,
                     updatedAt: updatedTask.updatedAt,
                 },
