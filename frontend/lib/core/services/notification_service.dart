@@ -1,4 +1,4 @@
-// import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -24,7 +24,7 @@ class NotificationService
 
     tz_data.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('notification_icon');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -87,8 +87,8 @@ class NotificationService
       channelDescription: 'Notifications for upcoming tasks',
       importance: Importance.high,
       priority: Priority.high,
-      // color: Color.fromARGB(255, 255, 0, 127),
-      icon: '@mipmap/ic_launcher',
+      color: Color(0xff121212),
+      icon: 'notification_icon',
     );
 
     const iosDetails = DarwinNotificationDetails(
