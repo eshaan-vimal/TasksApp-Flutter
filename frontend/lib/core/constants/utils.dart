@@ -27,6 +27,20 @@ Color hexToRgb (String hexColour)
 }
 
 
+int getWeekOffset (DateTime picked)
+{
+  DateTime now = DateTime.now();
+
+  picked = DateTime(picked.year, picked.month, picked.day);
+  now = DateTime(now.year, now.month, now.day);
+
+  DateTime pickedStart = picked.subtract(Duration(days: picked.weekday - 1));
+  DateTime nowStart = now.subtract(Duration(days: now.weekday - 1));
+
+  return pickedStart.difference(nowStart).inDays ~/ 7;
+}
+
+
 List<DateTime> getWeekDates (int weekOffset)
 {
   final today = DateTime.now();

@@ -51,13 +51,29 @@ class _DateSelectorState extends State<DateSelector>
               ),
             ),
         
-            Text(
-              month.toUpperCase(),
-              style: const TextStyle(
-                color: Color.fromARGB(255, 255, 0, 127),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 2.5,
+            GestureDetector(
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context, 
+                  firstDate: DateTime.now(), 
+                  lastDate: DateTime.now().add(Duration(days: 90)),
+                );
+                setState(() {
+                  if (date != null)
+                  {
+                    widget.onTap(date);
+                    weekOffset = getWeekOffset(date);
+                  }
+                });
+              },
+              child: Text(
+                month.toUpperCase(),
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 255, 0, 127),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 2.5,
+                ),
               ),
             ),
         

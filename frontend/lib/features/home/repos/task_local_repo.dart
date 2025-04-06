@@ -152,8 +152,6 @@ class TaskLocalRepo
         where: 'id = ?', 
         whereArgs: [taskId],
       );
-
-      print(db.query(tableName));
     } 
     catch (error) 
     {

@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         Icons.close_rounded,
                         weight: 5,
                         color: Color.fromRGBO(244, 67, 54, 1),
-                        size: 24,
+                        size: 21,
                       ),
                     ],
                   )

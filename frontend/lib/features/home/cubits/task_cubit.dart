@@ -64,7 +64,7 @@ class TaskCubit extends Cubit<TaskState>
         title: title, 
         description: description, 
         hexColour: rgbToHex(colour), 
-        dueAt: dueAt,
+        dueAt: dueAt.toUtc(),
       );
       await taskLocalRepo.insertTask(newTask);
 
@@ -146,7 +146,7 @@ class TaskCubit extends Cubit<TaskState>
       await taskRemoteRepo.updateTask(
         token: token, 
         taskId: taskId, 
-        doneAt: doneAt,
+        doneAt: doneAt.toUtc(),
       );
 
       emit (TaskUpdate());
@@ -155,7 +155,7 @@ class TaskCubit extends Cubit<TaskState>
     {
       try
       {
-        await taskLocalRepo.updateTask(taskId, doneAt);
+        await taskLocalRepo.updateTask(taskId, doneAt.toUtc());
 
         emit(TaskUpdate());
       }
