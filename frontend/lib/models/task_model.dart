@@ -75,6 +75,9 @@ class TaskModel
   String toJson () => json.encode(toMap());
 
 
+  bool get isDone => doneAt != null;
+
+
   TaskModel copyWith ({
     String? id,
     String? title,

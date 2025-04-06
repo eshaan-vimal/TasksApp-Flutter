@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/core/services/notification_service.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:frontend/features/home/repos/task_remote_repo.dart';
@@ -69,6 +70,13 @@ class TaskCubit extends Cubit<TaskState>
       await taskLocalRepo.insertTask(newTask);
 
       emit(NewTaskSuccess());
+
+      NotificationService().scheduleNotification(
+        taskId: newTask.id, 
+        title: newTask.title, 
+        description: newTask.description, 
+        dueAt: newTask.dueAt,
+      );
     }
     catch (error)
     {
@@ -89,6 +97,13 @@ class TaskCubit extends Cubit<TaskState>
         await taskLocalRepo.insertTask(newTask);
 
         emit(NewTaskSuccess());
+
+        NotificationService().scheduleNotification(
+          taskId: newTask.id, 
+          title: newTask.title, 
+          description: newTask.description, 
+          dueAt: newTask.dueAt,
+        );
       }
       catch (error)
       {
@@ -183,6 +198,8 @@ class TaskCubit extends Cubit<TaskState>
       await taskLocalRepo.deleteTask(taskId);
 
       emit(TaskDelete());
+
+      NotificationService().cancelNotification(taskId);
     }
     catch (error)
     {
@@ -191,6 +208,8 @@ class TaskCubit extends Cubit<TaskState>
         await taskLocalRepo.markDeleteTask(taskId);
 
         emit(TaskDelete());
+
+        NotificationService().cancelNotification(taskId);
       }
       catch (error)
       {
@@ -260,6 +279,14 @@ class TaskCubit extends Cubit<TaskState>
       {
         final localTask = updatedTasks[i];
         final remoteTask = syncedTasks[i];
+
+        NotificationService().cancelNotification(localTask.id);
+        NotificationService().scheduleNotification(
+          taskId: remoteTask.id, 
+          title: remoteTask.title, 
+          description: remoteTask.description, 
+          dueAt: remoteTask.dueAt,
+        );
 
         await taskLocalRepo.updateTaskId(
           oldId: localTask.id, 

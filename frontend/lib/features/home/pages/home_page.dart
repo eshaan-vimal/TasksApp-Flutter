@@ -388,7 +388,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   task.dueAt.year == selectedDate.year
                 )
                 {
-                  if (DateTime.now().isBefore(task.dueAt) && task.doneAt == null)
+                  if (DateTime.now().isBefore(task.dueAt) && !task.isDone)
                   {
                     pendingTasks.add(task);
                   }
