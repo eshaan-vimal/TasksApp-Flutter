@@ -4,6 +4,7 @@ import path from 'path';
 
 import authRouter from './routes/auth';
 import taskRouter from './routes/tasks';
+import { initDb } from './utils/db';
 
 dotenv.config({path: path.resolve(__dirname, "../.env")});
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
     res.send("hello");
 })
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, async () => {
+    await initDb();
     console.log("Server started at PORT 8000...");
 });

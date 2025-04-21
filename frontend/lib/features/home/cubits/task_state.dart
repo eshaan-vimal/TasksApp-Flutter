@@ -19,6 +19,19 @@ class TaskComposeSuccess extends TaskState
   const TaskComposeSuccess (this.description);
 }
 
+class TaskSuggesting extends TaskState {}
+
+class TaskSuggestSuccess extends TaskState
+{
+  final List<dynamic> suggestHints;
+  final List<dynamic> suggestTasks;
+
+  const TaskSuggestSuccess ({
+    required this.suggestHints,
+    required this.suggestTasks,
+  });
+}
+
 class NewTaskSuccess extends TaskState {}
 
 class GetTasksSuccess extends TaskState 

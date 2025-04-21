@@ -45,6 +45,35 @@ class TaskCubit extends Cubit<TaskState>
     }
   }
 
+
+  void smartSuggest ({
+    required String token,
+    required String timezone,
+  }) async
+  {
+    try
+    {
+      emit(TaskSuggesting());
+
+      final data = await taskRemoteRepo.smartSuggest(
+        token: token, 
+        timezone: timezone,
+      );
+
+      print(data['tasks'].runtimeType);
+
+      emit(TaskSuggestSuccess(
+        suggestHints: data['hints'],
+        suggestTasks: data['tasks'],
+      ));
+    }
+    catch (error, stacktrace)
+    {
+      print(stacktrace);
+      emit(TaskError(error.toString()));
+    }
+  }
+
   
   void newTask ({
     required String token,

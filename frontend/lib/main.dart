@@ -230,6 +230,10 @@ class _MyAppState extends State<MyApp>
 
         ),
 
+        checkboxTheme: CheckboxThemeData(
+          checkColor: WidgetStatePropertyAll(const Color.fromRGBO(255, 255, 255, 1)),
+        )
+
       ),
       home: const LoginPage(),
       debugShowCheckedModeBanner: false,

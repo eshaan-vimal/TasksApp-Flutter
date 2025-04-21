@@ -4,7 +4,7 @@ import { users } from "./user";
 
 
 export const tasks = pgTable(
-    "tasks",
+    'tasks',
     {
         id: uuid('id').primaryKey().defaultRandom(),
         title: text('title').notNull(),

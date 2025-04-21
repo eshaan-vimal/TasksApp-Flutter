@@ -12,6 +12,7 @@ import 'package:frontend/features/home/widgets/date_selector.dart';
 import 'package:frontend/features/home/widgets/task_card.dart';
 import 'package:frontend/core/constants/utils.dart';
 import 'package:frontend/models/task_model.dart';
+import 'package:frontend/features/home/widgets/suggestion_dialog.dart';
 
 
 class HomePage extends StatefulWidget
@@ -87,6 +88,20 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
 
     await taskCubit.getTasks(token: authCreds.user.token!);
+  }
+
+
+  void handleTaskSuggest ()
+  {
+    final authCreds = context.read<AuthCubit>().state as AuthLoggedIn;
+    final taskCubit = context.read<TaskCubit>();
+
+    taskCubit.smartSuggest(
+      token: authCreds.user.token!, 
+      timezone: DateTime.now().timeZoneName,
+    );
+
+    showSuggestionsDialog(context);
   }
 
 
@@ -318,9 +333,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         actions: [
 
           IconButton(
-            onPressed: () {
-
-            }, 
+            onPressed: handleTaskSuggest, 
             icon: const Icon(Icons.wb_incandescent_outlined)
           ),
     

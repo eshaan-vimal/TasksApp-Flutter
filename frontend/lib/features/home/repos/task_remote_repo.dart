@@ -51,6 +51,47 @@ class TaskRemoteRepo
   }
 
 
+  Future<Map<String,dynamic>> smartSuggest ({
+    required String token,
+    required String timezone,
+  }) async
+  {
+    try
+    {
+      if (await ConnectivityService().isOffline)
+      {
+        throw "Smart suggest needs internet connectivity";
+      }
+
+      final res = await http.post(
+        Uri.parse('${Constants.backendUri}/task/suggest'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: jsonEncode({
+          'timezone': timezone,
+        }),
+      ).timeout(Duration(seconds: 10));
+
+      if (res.statusCode != 200)
+      {
+        throw jsonDecode(res.body)['error'];
+      }
+
+      return jsonDecode(res.body);
+    }
+    on TimeoutException catch (_)
+    {
+      throw "Failed to connect to the server";
+    }
+    catch (error)
+    {
+      throw "Smart suggest failed";
+    }
+  }
+
+
   Future<TaskModel> newTask ({
     required String token,
     required String uid,

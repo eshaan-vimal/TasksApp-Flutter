@@ -5,6 +5,8 @@ import { GoogleGenAI } from '@google/genai';
 import { auth, AuthRequest } from '../middleware/auth';
 import { NewTask, tasks } from '../models/task';
 import { db } from '../utils/db';
+import { getTemporalRings } from '../utils/temporal_rings';
+import { createPrompt } from '../utils/create_prompt';
 
 
 const taskRouter = Router();
@@ -43,6 +45,55 @@ taskRouter.post('/compose', auth, async (req: AuthRequest, res) =>
     catch (error: any)
     {
         res.status(500).json({error: "Server Error: Smart compose failed"});
+    }
+});
+
+
+taskRouter.post('/suggest', auth, async (req: AuthRequest, res) =>
+{
+    try
+    {
+        if (!req.user)
+        {
+            res.status(401).json({error: "User not found"});
+        }
+
+        const { timezone } = req.body;
+
+        const temporalTasks = await getTemporalRings(req.user!);
+        const prompt = createPrompt(temporalTasks, timezone);
+
+        console.log(temporalTasks);
+
+        const aiResponse = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
+            contents: [{
+                "parts":[{"text": prompt}]
+            }],
+        });
+
+        if (!aiResponse.text)
+        {
+            res.status(500).json({error: "AI is busy"});
+        }
+
+        const cleanedText = aiResponse.text!.replace(/^```json\s*|```$/g, '').trim();
+        const data = JSON.parse(cleanedText);
+
+        if (!data.hasOwnProperty('tasks') || !data.hasOwnProperty('hints') ||
+            !Array.isArray(data.tasks) || !Array.isArray(data.hints) ||
+            data.tasks.length !== 3 || data.tasks.length !== data.hints.length) 
+        {
+            console.log(data);
+            res.status(500).json({error: "AI is stupid"});
+        }
+
+        res.status(200).json(data);
+    }
+    catch (error: any)
+    {
+        console.log(error);
+        res.status(500).json({error: "Server Error: Smart suggest failed"});
     }
 });
 
