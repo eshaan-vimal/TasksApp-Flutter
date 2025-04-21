@@ -1,4 +1,4 @@
 class Constants
 {
-  static String backendUri = "http://10.0.0.2:8000";
+  static String backendUri = "https://tasks-app-backend-rkxf.onrender.com";
 }
