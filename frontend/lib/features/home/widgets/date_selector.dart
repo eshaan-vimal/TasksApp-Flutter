@@ -55,8 +55,8 @@ class _DateSelectorState extends State<DateSelector>
               onTap: () async {
                 final date = await showDatePicker(
                   context: context, 
-                  firstDate: DateTime.now(), 
-                  lastDate: DateTime.now().add(Duration(days: 90)),
+                  firstDate: DateTime.now().subtract(Duration(days: 1825)), 
+                  lastDate: DateTime.now().add(Duration(days: 1825)),
                 );
                 setState(() {
                   if (date != null)

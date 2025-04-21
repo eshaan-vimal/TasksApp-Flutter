@@ -164,7 +164,7 @@ class _NewTaskPageState extends State<NewTaskPage>
 
         BlocListener<TaskCubit,TaskState>(
           listener: (context, state) {
-            if (state is NewTaskSuccess || state is TaskDelete)
+            if (state is NewTaskSuccess || state is TaskDelete || state is TaskComposing || state is TaskComposeSuccess || state is TaskError)
             {
               handleGetTasks();
             }

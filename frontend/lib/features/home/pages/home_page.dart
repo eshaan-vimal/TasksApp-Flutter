@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   child: tab == 1 ? 
                   const Icon(
                     Icons.check_box_outline_blank_rounded,
-                    size: 20,
+                    size: 30,
                   ) :
                   tab == 2 ?
                   const Stack(
@@ -167,13 +167,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     children: [
                       Icon(
                         Icons.check_box_outline_blank_rounded,
-                        size: 20,
+                        size: 30,
                       ),
                       Icon(
                         Icons.check_rounded,
                         weight: 5,
                         color: Color(0xFF00FF9C),
-                        size: 24,
+                        size: 32,
                       ),
                     ],
                   ) :
@@ -182,13 +182,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     children: [
                       Icon(
                         Icons.check_box_outline_blank_rounded,
-                        size: 20,
+                        size: 30,
                       ),
                       Icon(
                         Icons.close_rounded,
                         weight: 5,
                         color: Color.fromRGBO(244, 67, 54, 1),
-                        size: 21,
+                        size: 30,
                       ),
                     ],
                   )
@@ -316,6 +316,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ),
         ),
         actions: [
+
+          IconButton(
+            onPressed: () {
+
+            }, 
+            icon: const Icon(Icons.wb_incandescent_outlined)
+          ),
     
           IconButton(
             onPressed: () {
