@@ -162,14 +162,12 @@ class _NewTaskPageState extends State<NewTaskPage>
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
 
-        BlocListener<TaskCubit,TaskState>(
-          listener: (context, state) {
-            if (state is NewTaskSuccess || state is TaskDelete || state is TaskComposing || state is TaskComposeSuccess || state is TaskError)
-            {
-              handleGetTasks();
-            }
-          },
-        );
+        final state = context.read<TaskCubit>().state;
+        
+        if ((state is NewTaskSuccess || state is TaskDelete || state is TaskComposing || state is TaskComposeSuccess || state is TaskError) && didPop)
+        {
+          handleGetTasks();
+        }
       },
       child: Scaffold(
       
