@@ -132,11 +132,11 @@ class TaskCubit extends Cubit<TaskState>
       {
         final tasksList = await taskLocalRepo.getTasks();
 
-        if (tasksList.isEmpty)
-        {
-          emit(TaskError("No tasks found"));
-          return;
-        }
+        // if (tasksList.isEmpty)
+        // {
+        //   emit(TaskError("No tasks found"));
+        //   return;
+        // }
 
         emit(GetTasksSuccess(tasksList));
       }
